@@ -4,6 +4,7 @@ from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 import pandas as pd
 from utils import wrap
+from shutil import rmtree
 
 
 class VectorDataBase:
@@ -50,12 +51,15 @@ class VectorDataBase:
         db.as_retriever()
 
         # сохранить хранилище локально
+        rmtree(self.db_path, ignore_errors=False)
         db.save_local(self.db_path)
         return db
 
     def _create_vector_db(self):
         print("Creating vector database...")
-        df = pd.read_csv(self.data_path, sep=';')
+        ru_encoding = 'cp1251'
+        df = pd.read_csv(self.data_path, sep=';', encoding=ru_encoding)
+        df.columns = ['id', 'question', 'answer']
         vector_db = self._vectorize_docs(df, self.embeddings)
         print("Created vector database")
         return vector_db
