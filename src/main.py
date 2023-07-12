@@ -1,9 +1,11 @@
 import logging
 import os
 
+import task_manager
 from aiogram import Bot, Dispatcher, executor, types
 from chain import Chain
 from vector_db import VectorDataBase
+from user_db import UserDB
 from utils import wrap
 
 # TOKENS
@@ -17,9 +19,10 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
-# Initialize DB and LLM
-db = VectorDataBase()
-chain = Chain(db)
+# Initialize DBs and LLM
+user_db = UserDB()
+vector_db = VectorDataBase()
+chain = Chain(vector_db)
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -34,7 +37,13 @@ async def send_welcome(message: types.Message):
 @dp.message_handler()
 async def echo(message: types.Message):
     print(f"\tMessage from user {message.from_user.username}:")
-    answer = await chain.apredict(message.text)
+    user_id = message.from_user.id
+    user_msg = message.text
+
+    memory = user_db.get_memory(user_id)
+    answer = await chain.apredict(memory, user_msg)
+    user_db.store_messages(user_id=user_id, user_msg=user_msg, ai_msg=answer)
+
     print(f"\tAnswer: {wrap(answer)}")
     await message.reply(answer)
 
