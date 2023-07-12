@@ -34,7 +34,7 @@ async def send_welcome(message: types.Message):
 @dp.message_handler()
 async def echo(message: types.Message):
     print(f"\tMessage from user {message.from_user.username}:")
-    answer = await chain.predict(message.text)
+    answer = await chain.apredict(message.text)
     print(f"\tAnswer: {wrap(answer)}")
     await message.reply(answer)
 

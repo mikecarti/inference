@@ -12,7 +12,7 @@ class Chain:
         self.chain = self.init_chain()
         self.vector_db = db
 
-    async def predict(self, query):
+    async def apredict(self, query):
         manual_part = await self.vector_db.amanual_search(query)
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
