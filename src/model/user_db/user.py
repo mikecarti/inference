@@ -1,16 +1,16 @@
 import threading
 from dataclasses import dataclass
 
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 
 
 @dataclass()
 class User:
-    memory: ConversationBufferMemory
+    memory: ConversationBufferWindowMemory
     id: int | str
 
-    def __init__(self, user_id, name="TestName"):
-        self.memory = ConversationBufferMemory(memory_key="chat_history", input_key="question")
+    def __init__(self, user_id, memory, name="TestName"):
+        self.memory = memory
         self.id = user_id
         self.name = name
         self.max_time_since_last_query = 60 * 5  # 5 minutes and user is accounted as a user with solved problem

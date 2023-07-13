@@ -1,8 +1,11 @@
+from langchain.memory import ConversationBufferWindowMemory
+
 from .user import User
 
 class UserDB:
     def __init__(self):
         self.db = {}
+        self.store_k_interactions = 4
 
     def store_messages(self, user_id, user_msg, ai_msg):
         if self._user_exists(user_id):
@@ -26,7 +29,8 @@ class UserDB:
         if self._user_exists(user_id):
             raise Exception("User exists")
 
-        user = User(user_id=user_id)
+        memory = ConversationBufferWindowMemory(memory_key="chat_history", input_key="question", k=self.store_k_interactions)
+        user = User(user_id=user_id, memory=memory)
         self.db[user_id] = user
         return user
 

@@ -36,7 +36,6 @@ async def send_welcome(message: types.Message):
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
 
-
 @dp.message_handler()
 async def answer_message(message: types.Message):
     print(f"\tMessage from user {message.from_user.username}:")
