@@ -50,30 +50,51 @@ class VectorDataBase:
         db = FAISS.from_documents(texts, embeddings)
         db.as_retriever()
 
+        return db
+
+    def _save_db_locally(self, db):
         # сохранить хранилище локально
         rmtree(self.db_path, ignore_errors=False)
         db.save_local(self.db_path)
+
+    def _load_vector_db(self):
+        db = FAISS.load_local(self.db_path, self.embeddings)
+        print("Database loaded from local files")
         return db
 
     def _create_vector_db(self):
         print("Creating vector database...")
-        ru_encoding = 'cp1251'
-        df = pd.read_csv(self.data_path, sep=';', encoding=ru_encoding)
-        df.columns = ['id', 'question', 'answer']
+        df = self._read_data_for_db()
         vector_db = self._vectorize_docs(df, self.embeddings)
         print("Created vector database")
         return vector_db
 
-    def _load_vector_db(self):
-        return FAISS.load_local(self.db_path, self.embeddings)
+    def _update_vector_db(self):
+        print("Updating vector database...")
+        old_db = FAISS.load_local(self.db_path, self.embeddings)
+        new_data = self._read_data_for_db()
+        new_db = self._vectorize_docs(new_data, embeddings=self.embeddings)
+        old_db.merge_from(new_db)
+        print("Updated vector database")
+        return old_db
+
+    def _read_data_for_db(self):
+        ru_encoding = 'cp1251'
+        df = pd.read_csv(self.data_path, sep=';', encoding=ru_encoding)
+        df.columns = ['id', 'question', 'answer']
+        return df
 
     def _specify_db(self):
-        print("(1)Load vector db\n(2)Create one?\n\t [1/2]")
+        print("(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
         ans = input()
         if ans == "1":
             vector_db = self._load_vector_db()
         elif ans == "2":
             vector_db = self._create_vector_db()
+            self._save_db_locally(vector_db)
+        elif ans == "3":
+            vector_db = self._update_vector_db()
+            self._save_db_locally(vector_db)
         else:
             raise Exception("Invalid answer")
         return vector_db
@@ -83,4 +104,3 @@ class VectorDataBase:
             return OpenAIEmbeddings()
         else:
             return embeddings
-
