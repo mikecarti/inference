@@ -1,8 +1,8 @@
 from langchain.chains.question_answering import load_qa_chain
 from langchain.memory import ConversationBufferMemory
 
-from vector_db import VectorDataBase
-import task_manager
+from src.model.vector_db import VectorDataBase
+from src.model import task_manager
 
 from langchain import OpenAI
 from langchain.prompts import PromptTemplate

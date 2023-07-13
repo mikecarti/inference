@@ -3,7 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 import pandas as pd
-from utils import wrap
+from src.model.utils import wrap
 from shutil import rmtree
 
 

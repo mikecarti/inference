@@ -1,12 +1,11 @@
 import logging
 import os
 
-import task_manager
 from aiogram import Bot, Dispatcher, executor, types
-from chain import Chain
-from vector_db import VectorDataBase
-from user_db import UserDB
-from utils import wrap
+from src.model.chain import Chain
+from src.model.vector_db import VectorDataBase
+from src.model.user_db.user_db import UserDB
+from src.model.utils import wrap
 
 # TOKENS
 API_TOKEN = '6309821654:AAG2P_3WmwQfoG7hOrhLZDv665nN1IeU4jQ'
