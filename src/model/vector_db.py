@@ -22,17 +22,16 @@ class VectorDataBase:
         score = similar_docs[0][1]
         print(f"Score: {score}")
 
+        if verbose:
+            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {similar_doc.page_content} \
+        \n\n\tManual: {wrap(similar_doc.metadata['answer'])}")
+
         if score > self.threshold:
-            result = "Not found", "Tell user that you can not help with that problem"
+            return "Not found", "Tell user that you can not help with that problem"
         else:
             similar_question = similar_doc.page_content
             manual = similar_doc.metadata['answer']
-            result = similar_question, manual
-
-        if verbose:
-            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {wrap(result[0])} \
-        \n\n\tManual: {wrap(result[1])}")
-        return result
+            return similar_question, manual
 
     async def amanual_search(self, query, verbose=True):
         similar_question, manual = await self.asimilarity_search(query)
