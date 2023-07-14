@@ -9,21 +9,26 @@ from shutil import rmtree
 
 class VectorDataBase:
     def __init__(self, embeddings=None):
+        self.threshold = 0.45
         self.data_path = "data/data.csv"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embedddings(embeddings)
         self.db = self._specify_db()
 
-    async def asimilarity_search(self, query):
-        similar_docs = await self.db.asimilarity_search(query)
-        similar_doc = similar_docs[0]
-        return similar_doc
+    async def asimilarity_search(self, query) -> (str, str):
+        similar_docs = await self.db.asimilarity_search_with_relevance_scores(query)
+        similar_doc = similar_docs[0][0]
+        score = similar_docs[0][1]
+        if score > self.threshold:
+            return "Not found", "Tell user that you can not help with that problem"
+        else:
+            similar_question = similar_doc.page_content
+            manual = similar_doc.metadata['answer']
+            return similar_question, manual
 
     async def amanual_search(self, query, verbose=True):
-        doc = await self.asimilarity_search(query)
-        manual = doc.metadata['answer']
-        similar_question = doc.page_content
+        similar_question, manual = await self.asimilarity_search(query)
 
         if verbose:
             print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {wrap(similar_question)} \
