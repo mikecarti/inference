@@ -46,7 +46,7 @@ async def add_message_to_queue(message: types.Message):
 
 async def process_messages():
     print("Message processing task started")
-    sleep_for = 0.5
+    sleep_for = 0.0
     while True:
         await asyncio.sleep(sleep_for)
         for user_id in user_db.get_user_ids():
