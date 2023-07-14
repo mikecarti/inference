@@ -44,12 +44,12 @@ class Chain:
         If context seems not sufficient to answer a question you must tell that you can not answer this question.
         Else if user question seems not associated with issues, that might occur while placing bets on sports, refuse to answer
         and ask if you can help somehow.
-        Talk in same language as the other person.
+        Speak the same language that the Human speaks.
         Manual: {context} {manual_part}
         
         {chat_history}
         
-        Question: {question}
+        Human question: {question}
         """
         PROMPT = PromptTemplate(
             template=prompt_template, input_variables=['context', 'manual_part', 'question', 'chat_history']
