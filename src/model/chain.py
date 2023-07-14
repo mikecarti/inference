@@ -1,4 +1,5 @@
 from langchain.chains.question_answering import load_qa_chain
+from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 
 from src.model.vector_db import VectorDataBase
@@ -56,7 +57,7 @@ class Chain:
         )
 
         chain = load_qa_chain(
-            llm=OpenAI(temperature=0, max_tokens=500),
+            llm=ChatOpenAI(temperature=0, max_tokens=500),
             memory=ConversationBufferMemory(memory_key="chat_history", input_key="question"),
             prompt=PROMPT,
             verbose=True,
