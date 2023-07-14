@@ -16,24 +16,26 @@ class VectorDataBase:
         self.embeddings = self._init_embedddings(embeddings)
         self.db = self._specify_db()
 
-    async def asimilarity_search(self, query) -> (str, str):
+    async def asimilarity_search(self, query, verbose=True) -> (str, str):
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
         print(f"Score: {score}")
+
         if score > self.threshold:
-            return "Not found", "Tell user that you can not help with that problem"
+            result = "Not found", "Tell user that you can not help with that problem"
         else:
             similar_question = similar_doc.page_content
             manual = similar_doc.metadata['answer']
-            return similar_question, manual
+            result = similar_question, manual
+
+        if verbose:
+            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {wrap(result[0])} \
+        \n\n\tManual: {wrap(result[1])}")
+        return result
 
     async def amanual_search(self, query, verbose=True):
         similar_question, manual = await self.asimilarity_search(query)
-
-        if verbose:
-            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {wrap(similar_question)} \
-        \n\n\tManual: {wrap(manual)}")
 
         return manual
 
