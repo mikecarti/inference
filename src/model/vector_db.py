@@ -9,7 +9,7 @@ from shutil import rmtree
 
 class VectorDataBase:
     def __init__(self, embeddings=None):
-        self.threshold = 0.55
+        self.threshold = 0.6
         self.data_path = "data/data.csv"
         self.db_path = "faiss_index"
 
@@ -26,7 +26,7 @@ class VectorDataBase:
             print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {similar_doc.page_content} \
         \n\n\tManual: {wrap(similar_doc.metadata['answer'])}")
 
-        if score > self.threshold:
+        if score < self.threshold:
             return "Not found", "Tell user that you can not help with that problem"
         else:
             similar_question = similar_doc.page_content
