@@ -23,8 +23,7 @@ class VectorDataBase:
         print(f"Score: {score}")
 
         if verbose:
-            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {similar_doc.page_content} \
-        \n\n\tManual: {wrap(similar_doc.metadata['answer'])}")
+            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {similar_doc.page_content}")
 
         if score < self.threshold:
             return "Not found", "Tell user that you can not help with that problem"
