@@ -9,7 +9,7 @@ from shutil import rmtree
 
 class VectorDataBase:
     def __init__(self, embeddings=None):
-        self.threshold = 0.45
+        self.threshold = 0.55
         self.data_path = "data/data.csv"
         self.db_path = "faiss_index"
 
@@ -20,6 +20,7 @@ class VectorDataBase:
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
+        print(f"Score: {score}")
         if score > self.threshold:
             return "Not found", "Tell user that you can not help with that problem"
         else:
