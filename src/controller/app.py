@@ -57,7 +57,6 @@ async def process_messages():
 
 @dp.message_handler()
 async def answer_message(message: types.Message):
-    print(f"\tMessage from user {message.from_user.username}:")
     user_id = message.from_user.id
     user_msg = message.text
 
