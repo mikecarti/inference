@@ -1,4 +1,5 @@
 venv
 src/view/__pycache__
 src/model/__pycache__
+src/model/user_db/__pycache__
 src/controller/__pycache__
