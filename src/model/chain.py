@@ -59,7 +59,7 @@ class Chain:
             llm=OpenAI(temperature=0, max_tokens=500),
             memory=ConversationBufferMemory(memory_key="chat_history", input_key="question"),
             prompt=PROMPT,
-            verbose=True
+            verbose=True,
         )
         return chain
 

@@ -86,7 +86,8 @@ class VectorDataBase:
 
     def _specify_db(self):
         print("(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
-        ans = input()
+        # ans = input()
+        ans = "1"
         if ans == "1":
             vector_db = self._load_vector_db()
         elif ans == "2":
