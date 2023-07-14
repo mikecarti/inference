@@ -22,7 +22,7 @@ class User:
         self.memory = memory
         self.id = user_id
         self.name = name
-        self.max_time_since_last_query = 60 * 5  # 5 minutes and user is accounted as a user with solved problem
+        self.max_time_since_last_query = 60 * 1 # seconds and user is accounted as a user with solved problem
         self.problem_solved_countdown = threading.Timer(self.max_time_since_last_query, self._reset_memory)
         self.message_queue = asyncio.Queue()
         self.log_resets = False
