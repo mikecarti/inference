@@ -1,3 +1,6 @@
+import codecs
+
+import chardet as chardet
 from langchain.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
@@ -82,10 +85,24 @@ class VectorDataBase:
         return old_db
 
     def _read_data_for_db(self):
-        ru_encoding = 'cp1251'
-        df = pd.read_csv(self.data_path, sep=';', encoding=ru_encoding)
+        encoding = "utf-8"
+        self._set_encoding_of_data_file(encoding)
+
+        df = pd.read_csv(self.data_path, sep=';', encoding=encoding)
         df.columns = ['id', 'question', 'answer']
         return df
+
+    def _set_encoding_of_data_file(self, needed_encoding):
+        with open(self.data_path, 'rb') as f:
+            raw_data = f.read(500)
+        # Detect the encoding of the raw data
+        current_encoding = chardet.detect(raw_data)['encoding']
+        # Translate file encoding to needed encoding
+        with codecs.open(self.data_path, 'r', encoding=current_encoding) as f:
+            content = f.read()
+        # Open a new UTF-8 encoded file and write the content
+        with codecs.open(self.data_path, 'w', encoding=needed_encoding) as f:
+            f.write(content)
 
     def _specify_db(self):
         print("(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
