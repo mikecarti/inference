@@ -1,6 +1,7 @@
 import codecs
 
 import chardet as chardet
+from loguru import logger
 from langchain.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
@@ -27,10 +28,11 @@ class VectorDataBase:
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
-        print(f"Score: {score}")
+        logger.debug(f"Score: {score}")
 
         if verbose:
-            print(f"\tReal Question: {wrap(query)} \n\n\tFound Question: {similar_doc.page_content}")
+            logger.debug(f"Real Question: {wrap(query)}")
+            logger.debug(f"Found Question: {similar_doc.page_content}")
 
         if score < self.threshold:
             return "Tell user that you can not help with that problem"
@@ -65,23 +67,23 @@ class VectorDataBase:
 
     def _load_vector_db(self):
         db = FAISS.load_local(self.db_path, self.embeddings)
-        print("Database loaded from local files")
+        logger.info("Database loaded from local files")
         return db
 
     def _create_vector_db(self):
-        print("Creating vector database...")
+        logger.info("Creating vector database...")
         df = self._read_data_for_db()
         vector_db = self._vectorize_docs(df, self.embeddings)
-        print("Created vector database")
+        logger.info("Created vector database")
         return vector_db
 
     def _update_vector_db(self):
-        print("Updating vector database...")
+        logger.info("Updating vector database...")
         old_db = FAISS.load_local(self.db_path, self.embeddings)
         new_data = self._read_data_for_db()
         new_db = self._vectorize_docs(new_data, embeddings=self.embeddings)
         old_db.merge_from(new_db)
-        print("Updated vector database")
+        logger.info("Updated vector database")
         return old_db
 
     def _read_data_for_db(self):
@@ -105,7 +107,7 @@ class VectorDataBase:
             f.write(content)
 
     def _specify_db(self):
-        print("(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
+        logger.info("\n(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
         ans = input()
         if ans == "1":
             vector_db = self._load_vector_db()

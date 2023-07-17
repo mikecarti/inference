@@ -1,6 +1,8 @@
 aiogram==2.25.1
-langchain==0.0.231
+langchain~=0.0.229
 pandas==2.0.3
 openai==0.27.8
 faiss-cpu==1.7.4
 tiktoken==0.4.0
+loguru==0.7.0
+chardet~=5.1.0

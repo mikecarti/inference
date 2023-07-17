@@ -3,7 +3,7 @@ import copy
 import threading
 from asyncio import QueueEmpty
 from dataclasses import dataclass
-
+from loguru import logger
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 
 
@@ -49,7 +49,7 @@ class User:
 
     def _reset_memory(self):
         if self.log_resets:
-            print(f"Memory of user {self.id} was reset")
+            logger.debug(f"Memory of user {self.id} was reset")
         self.memory = copy.deepcopy(self._empty_memory)
 
     def task_done(self):

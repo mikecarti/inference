@@ -1,12 +1,15 @@
 import asyncio
 import logging
 import os
+import sys
 
+from loguru import logger
+from src.model.utils import init_logging
 from aiogram import Bot, Dispatcher, executor, types
 from src.model.chain import Chain
 from src.model.vector_db import VectorDataBase
 from src.model.user_db.user_db import UserDB
-from src.model.utils import wrap
+from src.model.utils import wrap, init_logging
 from src.view.view import View
 
 # TOKENS
@@ -15,6 +18,7 @@ os.environ['OPENAI_API_KEY'] = "sk-GAVqeY6lKlAQya709ph1T3BlbkFJqTjm1bLbdr3vp1uLi
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
+init_logging()
 
 # Initialize bot and dispatcher
 bot = Bot(token=API_TOKEN)
@@ -29,6 +33,9 @@ chain = Chain(vector_db)
 view = View()
 
 
+
+
+
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
     """
@@ -39,13 +46,13 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler()
 async def add_message_to_queue(message: types.Message):
-    print(f"\tMessage from user {message.from_user.username} added to queue: <{message.text}>")
+    logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
     await user_db.add_to_queue(user_id, message)
 
 
 async def process_messages():
-    print("Message processing task started")
+    logger.info("Message processing task started")
     sleep_for = 0.0
     while True:
         await asyncio.sleep(sleep_for)
@@ -62,17 +69,18 @@ async def answer_message(message: types.Message):
 
     memory = user_db.get_memory(user_id)
     answer = await chain.apredict(memory, user_msg)
-    # user_db.store_messages(user_id=user_id, user_msg=user_msg, ai_msg=answer)
 
     answer = view.process_answer(answer)
-    print(f"\tAnswer: {wrap(answer)}")
+    logger.debug(f"Answer: {wrap(answer)}")
     await message.reply(answer)
 
 
 async def on_startup_launch(args):
     asyncio.create_task(process_messages())
 
-
-if __name__ == '__main__':
+def main():
     os.environ["PYTHONASYNCIODEBUG"] = "1"
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup_launch)
+
+if __name__ == '__main__':
+    main()
