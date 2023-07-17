@@ -99,6 +99,8 @@ class VectorDataBase:
             raw_data = f.read(500)
         # Detect the encoding of the raw data
         current_encoding = chardet.detect(raw_data)['encoding']
+        logger.info(
+            f"While extracting data to vector DB, encoding found out to be {current_encoding}. Converting to UTF-8...")
         # Translate file encoding to needed encoding
         with codecs.open(self.data_path, 'r', encoding=current_encoding) as f:
             content = f.read()
