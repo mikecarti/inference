@@ -57,7 +57,7 @@ class Chain:
         )
 
         chain = load_qa_chain(
-            llm=OpenAI(temperature=0, max_tokens=2048),
+            llm=OpenAI(temperature=0, max_tokens=900),
             memory=ConversationBufferMemory(memory_key="chat_history", input_key="question"),
             prompt=PROMPT,
             verbose=True,
