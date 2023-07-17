@@ -24,8 +24,8 @@ class VectorDataBase:
         self.embeddings = self._init_embedddings(embeddings)
         self.db = self._specify_db()
 
-    async def amanual_search(self, query, verbose=True) -> (str, str):
-        similar_docs = await self.db.asimilarity_search_with_relevance_scores(query)
+    async def amanual_search(self, query, verbose=True, k_nearest=4) -> (str, str):
+        similar_docs = await self.db.asimilarity_search_with_relevance_scores(query, k=k_nearest)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
         logger.debug(f"Score: {score}")

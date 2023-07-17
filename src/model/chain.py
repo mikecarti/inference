@@ -4,6 +4,7 @@ from langchain.memory import ConversationBufferMemory
 from src.model.vector_db import VectorDataBase
 from src.model import task_manager
 
+from loguru import logger
 from langchain import OpenAI
 from langchain.prompts import PromptTemplate
 
@@ -27,6 +28,8 @@ class Chain:
 
     async def amanual_search(self, memory, query):
         user_history = await task_manager.acompose_user_history(memory=memory, query=query)
+
+        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
         manual_part = await self.vector_db.amanual_search(user_history)
         return manual_part
 

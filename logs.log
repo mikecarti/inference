@@ -90,3 +90,83 @@ bets on sports on our betting service?
 
 	Found Question: произвёл оплату через сбербанк .отправил деньги а оператор отклонил
 2023-07-17 11:09:16.787 | DEBUG    | __main__:answer_message:74 - Answer: Извините, я не могу ответить на этот вопрос. Могу ли я вам как-то помочь?
+2023-07-17 11:23:14.133 | INFO     | src.model.vector_db:_specify_db:112 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:23:18.227 | INFO     | src.model.vector_db:_load_vector_db:70 - Database loaded from local files
+2023-07-17 11:23:18.866 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:23:25.343 | INFO     | src.model.vector_db:_specify_db:112 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:23:26.672 | INFO     | src.model.vector_db:_create_vector_db:74 - Creating vector database...
+2023-07-17 11:23:26.676 | INFO     | src.model.vector_db:_set_encoding_of_data_file:102 - While extracting data to vector DB, encoding found out to be windows-1251. Converting to UTF-8...
+2023-07-17 11:23:28.749 | INFO     | src.model.vector_db:_create_vector_db:77 - Created vector database
+2023-07-17 11:23:29.525 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:25:56.300 | INFO     | src.model.vector_db:_specify_db:112 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:25:58.991 | INFO     | src.model.vector_db:_load_vector_db:70 - Database loaded from local files
+2023-07-17 11:26:00.039 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:26:07.300 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?>
+2023-07-17 11:26:07.301 | DEBUG    | src.model.chain:amanual_search:32 - SEARCHING IN VECTOR DB THIS: 
+ Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:26:08.411 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.8666823426590832
+2023-07-17 11:26:08.411 | DEBUG    | src.model.vector_db:amanual_search:34 - Real Question: Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:26:08.411 | DEBUG    | src.model.vector_db:amanual_search:35 - Found Question: Сегодня пополнял свой счет на 10000 рублей, но перевёл только 5000 рублей. Я отправил запрос в поддержку, чтобы отменить транзакцию, но деньги до сих пор не вернулись на мой счёт. Что мне делать?
+2023-07-17 11:26:19.005 | DEBUG    | __main__:answer_message:74 - Answer: Answer: Извините, но это не связано с проблемами, которые могут возникнуть при ставках на спортивные
+события на букмекерской площадке. Могу ли я вам помочь по другому?
+2023-07-17 11:27:23.974 | INFO     | src.model.vector_db:_specify_db:112 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:27:27.710 | INFO     | src.model.vector_db:_load_vector_db:70 - Database loaded from local files
+2023-07-17 11:27:28.609 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:27:38.353 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?>
+2023-07-17 11:27:38.358 | DEBUG    | src.model.chain:amanual_search:32 - SEARCHING IN VECTOR DB THIS: 
+ Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:27:39.738 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.8666444947891204
+2023-07-17 11:27:39.739 | DEBUG    | src.model.vector_db:amanual_search:34 - Real Question: Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:27:39.739 | DEBUG    | src.model.vector_db:amanual_search:35 - Found Question: Сегодня пополнял свой счет на 10000 рублей, но перевёл только 5000 рублей. Я отправил запрос в поддержку, чтобы отменить транзакцию, но деньги до сих пор не вернулись на мой счёт. Что мне делать?
+2023-07-17 11:28:00.139 | DEBUG    | __main__:answer_message:74 - Answer: Answer: Извините, но это не связано с проблемами, которые могут возникнуть при ставках на спортивные
+события на букмекерской площадке. Могу ли я вам помочь по другому?
+2023-07-17 11:28:09.876 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?>
+2023-07-17 11:28:09.878 | DEBUG    | src.model.chain:amanual_search:32 - SEARCHING IN VECTOR DB THIS: 
+ Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:28:17.661 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.8666444947891204
+2023-07-17 11:28:17.662 | DEBUG    | src.model.vector_db:amanual_search:34 - Real Question: Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:28:17.662 | DEBUG    | src.model.vector_db:amanual_search:35 - Found Question: Сегодня пополнял свой счет на 10000 рублей, но перевёл только 5000 рублей. Я отправил запрос в поддержку, чтобы отменить транзакцию, но деньги до сих пор не вернулись на мой счёт. Что мне делать?
+2023-07-17 11:28:47.472 | DEBUG    | __main__:answer_message:74 - Answer: AI Answer: Извините, но это не связано с проблемами, которые могут возникнуть при ставках на
+спортивные события на букмекерской площадке. Могу ли я вам помочь по другому?
+2023-07-17 11:29:35.216 | INFO     | src.model.vector_db:_specify_db:112 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:29:43.339 | INFO     | src.model.vector_db:_load_vector_db:70 - Database loaded from local files
+2023-07-17 11:29:43.972 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:29:49.415 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?>
+2023-07-17 11:29:49.417 | DEBUG    | src.model.chain:amanual_search:32 - SEARCHING IN VECTOR DB THIS: 
+ Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:30:09.836 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.8666444947891204
+2023-07-17 11:30:09.836 | DEBUG    | src.model.vector_db:amanual_search:34 - Real Question: Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?
+2023-07-17 11:30:09.837 | DEBUG    | src.model.vector_db:amanual_search:35 - Found Question: Сегодня пополнял свой счет на 10000 рублей, но перевёл только 5000 рублей. Я отправил запрос в поддержку, чтобы отменить транзакцию, но деньги до сих пор не вернулись на мой счёт. Что мне делать?
+2023-07-17 11:33:36.853 | DEBUG    | __main__:answer_message:74 - Answer: Answer: Извините, это не связано с проблемами, которые могут возникнуть при ставках на спортивные
+события на букмекерской площадке. Могу ли я вам как-то помочь?
+2023-07-17 11:34:14.582 | INFO     | src.model.vector_db:_specify_db:113 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:34:16.144 | INFO     | src.model.vector_db:_load_vector_db:71 - Database loaded from local files
+2023-07-17 11:34:16.770 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:34:23.705 | DEBUG    | __main__:add_message_to_queue:49 - Message from user None added to queue: <Я час назад выводил,они до сих пор не пришли, что может быть задержкой?>
+2023-07-17 11:34:23.707 | DEBUG    | src.model.chain:amanual_search:32 - SEARCHING IN VECTOR DB THIS: 
+ Я час назад выводил,они до сих пор не пришли, что может быть задержкой?
+2023-07-17 11:34:51.441 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <Я снял деньги со счета, но деньги не зачислились на мою карту. Почему?>
