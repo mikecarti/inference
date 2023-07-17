@@ -1,0 +1,92 @@
+2023-07-17 10:49:41.597 | INFO     | __main__:process_messages:49 - Message processing task started
+2023-07-17 10:51:27.686 | INFO     | __main__:process_messages:49 - Message processing task started
+2023-07-17 10:52:12.587 | INFO     | __main__:process_messages:49 - Message processing task started
+2023-07-17 10:52:16.960 | DEBUG    | __main__:add_message_to_queue:43 - 	Message from user mikecarti added to queue: <привт>
+2023-07-17 10:52:18.036 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.7183299982970875
+2023-07-17 10:52:18.037 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: привт 
+
+	Found Question: произвёл оплату через сбербанк .отправил деньги а оператор отклонил
+2023-07-17 10:52:18.647 | DEBUG    | __main__:add_message_to_queue:43 - 	Message from user mikecarti added to queue: <кулити>
+2023-07-17 10:52:20.010 | DEBUG    | __main__:answer_message:68 - 	Answer: Sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 10:52:21.028 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.7026974371564574
+2023-07-17 10:52:21.028 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: кулити 
+
+	Found Question: Не могу вывести деньги
+2023-07-17 10:52:23.209 | DEBUG    | __main__:answer_message:68 - 	Answer: I'm sorry, I don't understand your question. Can I help you with something else related to placing
+bets on sports on our betting service?
+2023-07-17 10:54:01.437 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 10:54:17.342 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 10:54:44.965 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 10:56:30.332 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 10:59:42.321 | INFO     | __main__:process_messages:51 - Message processing task started
+2023-07-17 10:59:42.689 | DEBUG    | __main__:add_message_to_queue:45 - 	Message from user mikecarti added to queue: <ку>
+2023-07-17 10:59:44.025 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.6458029005894194
+2023-07-17 10:59:44.025 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: ку 
+
+	Found Question: произвёл оплату через сбербанк .отправил деньги а оператор отклонил
+2023-07-17 10:59:45.647 | DEBUG    | __main__:answer_message:70 - 	Answer: Sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 10:59:51.678 | DEBUG    | __main__:add_message_to_queue:45 - 	Message from user mikecarti added to queue: <и че>
+2023-07-17 10:59:52.508 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.675011994233197
+2023-07-17 10:59:52.508 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: и че 
+
+	Found Question: Я забыл пароль, что мне делать?
+2023-07-17 10:59:54.590 | DEBUG    | __main__:answer_message:70 - 	Answer: Sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 11:00:35.625 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 11:00:39.560 | DEBUG    | __main__:add_message_to_queue:44 - 	Message from user mikecarti added to queue: <ку>
+2023-07-17 11:00:40.382 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.6224610065065705
+2023-07-17 11:00:40.382 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: ку 
+
+	Found Question: произвёл оплату через сбербанк .отправил деньги а оператор отклонил
+2023-07-17 11:00:42.822 | DEBUG    | __main__:answer_message:69 - 	Answer: Sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 11:00:51.627 | DEBUG    | __main__:add_message_to_queue:44 - 	Message from user mikecarti added to queue: <ясно>
+2023-07-17 11:00:52.401 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.7216990909265029
+2023-07-17 11:00:52.403 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: ясно 
+
+	Found Question: Хотелось бы узнать, возможно ли сделать вывод денег без подтверждения по СМС?
+2023-07-17 11:00:55.079 | DEBUG    | __main__:answer_message:69 - 	Answer: Sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 11:01:37.408 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 11:01:38.772 | DEBUG    | __main__:add_message_to_queue:44 - 	Message from user mikecarti added to queue: <ку ку>
+2023-07-17 11:01:39.881 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.6787943367122617
+2023-07-17 11:01:39.882 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: ку ку 
+
+	Found Question: Почему мне не начисляют кешбек?
+2023-07-17 11:01:42.223 | DEBUG    | __main__:answer_message:69 - 	Answer: Sorry, I don't understand. Can I help you with something else?
+2023-07-17 11:02:17.262 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 11:02:19.357 | DEBUG    | __main__:add_message_to_queue:44 - 	Message from user mikecarti added to queue: <кулити>
+2023-07-17 11:02:20.533 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.7028183564648351
+2023-07-17 11:02:20.534 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: кулити 
+
+	Found Question: Не могу вывести деньги
+2023-07-17 11:02:22.178 | DEBUG    | __main__:answer_message:69 - 	Answer: I'm sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 11:03:03.927 | INFO     | __main__:process_messages:50 - Message processing task started
+2023-07-17 11:07:06.851 | INFO     | src.model.vector_db:_specify_db:109 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:07:31.199 | INFO     | src.model.vector_db:_specify_db:109 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:07:38.083 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-17 11:07:38.788 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:07:55.621 | DEBUG    | __main__:add_message_to_queue:49 - 	Message from user mikecarti added to queue: <кулити>
+2023-07-17 11:07:56.893 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.7028183564648351
+2023-07-17 11:07:56.894 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: кулити 
+
+	Found Question: Не могу вывести деньги
+2023-07-17 11:07:58.393 | DEBUG    | __main__:answer_message:74 - 	Answer: I'm sorry, I don't understand your question. Can I help you with something else?
+2023-07-17 11:08:50.645 | INFO     | src.model.vector_db:_specify_db:109 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-17 11:08:52.688 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-17 11:08:53.459 | INFO     | __main__:process_messages:55 - Message processing task started
+2023-07-17 11:09:09.189 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <куку>
+2023-07-17 11:09:11.080 | DEBUG    | src.model.vector_db:amanual_search:31 - Score: 0.6375230679057573
+2023-07-17 11:09:11.081 | DEBUG    | src.model.vector_db:amanual_search:34 - 	Real Question: куку 
+
+	Found Question: произвёл оплату через сбербанк .отправил деньги а оператор отклонил
+2023-07-17 11:09:16.787 | DEBUG    | __main__:answer_message:74 - Answer: Извините, я не могу ответить на этот вопрос. Могу ли я вам как-то помочь?
