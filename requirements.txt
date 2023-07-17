@@ -1,4 +1,5 @@
 aiogram==2.25.1
 langchain==0.0.231
 pandas==2.0.3
-openai
+openai==0.27.8
+faiss-cpu==1.7.4

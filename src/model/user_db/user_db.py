@@ -4,6 +4,10 @@ from .user import User
 from typing import *
 
 
+class UserExistsException(Exception):
+    pass
+
+
 class UserDB:
 
     def __init__(self):
@@ -41,7 +45,7 @@ class UserDB:
 
     def _add_user(self, user_id) -> User:
         if self._user_exists(user_id):
-            raise Exception("User exists")
+            raise UserExistsException(f"User {user_id} exists")
 
         memory = self._init_conversation_memory()
         user = User(user_id=user_id, memory=memory)

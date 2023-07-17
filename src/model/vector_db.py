@@ -7,6 +7,10 @@ from src.model.utils import wrap
 from shutil import rmtree
 
 
+class InvalidAnswerException(Exception):
+    pass
+
+
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
@@ -95,7 +99,7 @@ class VectorDataBase:
             vector_db = self._update_vector_db()
             self._save_db_locally(vector_db)
         else:
-            raise Exception("Invalid answer")
+            raise InvalidAnswerException("Invalid answer")
         return vector_db
 
     def _init_embedddings(self, embeddings):
