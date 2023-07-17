@@ -3,3 +3,4 @@ langchain==0.0.231
 pandas==2.0.3
 openai==0.27.8
 faiss-cpu==1.7.4
+tiktoken==0.4.0
