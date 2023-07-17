@@ -23,21 +23,6 @@ class UserDB:
         message = await user.get_from_queue()
         return message
 
-    def store_messages(self, user_id, user_msg, ai_msg):
-        """
-        DEPRECATED
-        :param user_id:
-        :param user_msg:
-        :param ai_msg:
-        :return:
-        """
-        if self._user_exists(user_id):
-            user = self._get(user_id)
-        else:
-            user = self._add_user(user_id)
-        user.memory.chat_memory.add_user_message(user_msg)
-        user.memory.chat_memory.add_ai_message(ai_msg)
-
     def notify_queue_message_processed(self, user_id):
         self._get(user_id).task_done()
 

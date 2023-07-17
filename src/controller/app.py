@@ -62,7 +62,6 @@ async def answer_message(message: types.Message):
 
     memory = user_db.get_memory(user_id)
     answer = await chain.apredict(memory, user_msg)
-    # user_db.store_messages(user_id=user_id, user_msg=user_msg, ai_msg=answer)
 
     answer = view.process_answer(answer)
     print(f"\tAnswer: {wrap(answer)}")
