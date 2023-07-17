@@ -42,7 +42,7 @@ class Chain:
         Manual just tells how to solve problems, but sometimes manual problem is not the same as a problem
         of a person.
         If context seems not sufficient to answer a question you must tell that you can not answer this question.
-        Else if user question seems not associated with issues, that might occur while placing bets on sports, refuse to answer
+        Else if user question seems not associated with issues, that might occur due to using online gambling service, refuse to answer
         and ask if you can help somehow.
         Speak the same language that the Human speaks.
         Manual: {context} {manual_part}
