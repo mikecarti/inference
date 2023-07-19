@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+import langchain
 from loguru import logger
 from src.model.utils import init_logging
 from aiogram import Bot, Dispatcher, executor, types
@@ -80,6 +81,7 @@ async def on_startup_launch(args):
 
 def main():
     os.environ["PYTHONASYNCIODEBUG"] = "1"
+    # langchain.debug = True
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup_launch)
 
 if __name__ == '__main__':

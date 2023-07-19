@@ -12,7 +12,8 @@ class UserDB:
 
     def __init__(self):
         self.db = {}
-        self.store_k_interactions = 4
+        self.store_k_interactions = 1
+        self.memory_life_time_seconds = 60 * 2
 
     async def add_to_queue(self, user_id, message):
         if not self._user_exists(user_id):
@@ -48,7 +49,7 @@ class UserDB:
             raise UserExistsException(f"User {user_id} exists")
 
         memory = self._init_conversation_memory()
-        user = User(user_id=user_id, memory=memory)
+        user = User(user_id=user_id, memory_life_time_seconds=self.memory_life_time_seconds, memory=memory)
         self.db[user_id] = user
         return user
 
@@ -62,4 +63,5 @@ class UserDB:
         return ConversationBufferWindowMemory(memory_key="chat_history",
                                               input_key="question",
                                               k=self.store_k_interactions,
-                                              ai_prefix="AI")
+                                              human_prefix="User",
+                                              ai_prefix="HelpDesk")

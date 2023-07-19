@@ -17,13 +17,13 @@ class User:
     memory: ConversationBufferWindowMemory
     id: int | str
 
-    def __init__(self, user_id, memory, name="TestName"):
+    def __init__(self, user_id, memory, memory_life_time_seconds, name="TestName"):
         self._empty_memory = copy.deepcopy(memory)
         self.memory = memory
         self.id = user_id
         self.name = name
-        self.max_time_since_last_query = 60 * 3 # seconds and user is accounted as a user with solved problem
-        self.problem_solved_countdown = threading.Timer(self.max_time_since_last_query, self._reset_memory)
+        self.memory_life_time_seconds = memory_life_time_seconds  # seconds and user is accounted as a user with solved problem
+        self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self._reset_memory)
         self.message_queue = asyncio.Queue()
         self.log_resets = False
 
@@ -44,7 +44,7 @@ class User:
 
     def _reset_countdown(self):
         self.problem_solved_countdown.cancel()
-        self.problem_solved_countdown = threading.Timer(self.max_time_since_last_query, self._reset_memory)
+        self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self._reset_memory)
         self.problem_solved_countdown.start()
 
     def _reset_memory(self):

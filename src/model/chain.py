@@ -1,11 +1,13 @@
 from langchain.chains.question_answering import load_qa_chain
-from langchain.memory import ConversationBufferMemory
+from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 
 from src.model.vector_db import VectorDataBase
 from src.model import task_manager
+from src.model.prompts import PROMPT_TEMPLATE
 
 from loguru import logger
-from langchain import OpenAI
+from langchain import OpenAI, LLMChain
 from langchain.prompts import PromptTemplate
 
 PAID_API_KEY = "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"
@@ -40,25 +42,21 @@ class Chain:
 
     @staticmethod
     def init_chain():
-        prompt_template = """You are a helpful betting company help desk assistant that tries to answer questions 
-        based on manual provided. Manual just tells how to solve problems, but sometimes manual problem is not the 
-        same as a problem of a person. If context seems not sufficient to answer a question you must tell that you 
-        can not answer this question. Else if user question seems not associated with issues, that might occur while 
-        placing bets on sports on betting service, refuse to answer and ask if you can help somehow. Only speak russian language. 
-        Manual: {context} {manual_part}
-        
-        {chat_history}
-        
-        Human Question: {question}
-        """
-        PROMPT = PromptTemplate(
-            template=prompt_template, input_variables=['context', 'manual_part', 'question', 'chat_history']
+        prompt = PromptTemplate(
+            template=PROMPT_TEMPLATE, input_variables=['manual_part', 'question', 'chat_history']
         )
 
-        chain = load_qa_chain(
-            llm=OpenAI(temperature=0, max_tokens=900),
-            memory=ConversationBufferMemory(memory_key="chat_history", input_key="question"),
-            prompt=PROMPT,
+        # chain = load_qa_chain(
+        #     llm=OpenAI(temperature=0, max_tokens=900),
+        #     memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
+        #     prompt=prompt,
+        #     verbose=True,
+        # )
+
+        chain = LLMChain(
+            llm=ChatOpenAI(temperature=0, top_p=1, max_tokens=1500),
+            memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
+            prompt=prompt,
             verbose=True,
         )
         return chain

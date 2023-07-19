@@ -88,7 +88,7 @@ class VectorDataBase:
 
     def _read_data_for_db(self):
         encoding = "utf-8"
-        self._set_encoding_of_data_file(encoding)
+        # self._set_encoding_of_data_file(encoding)
 
         df = pd.read_csv(self.data_path, sep=';', encoding=encoding)
         df.columns = ['id', 'question', 'answer']
