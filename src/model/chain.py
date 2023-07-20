@@ -46,13 +46,6 @@ class Chain:
             template=PROMPT_TEMPLATE, input_variables=['manual_part', 'question', 'chat_history']
         )
 
-        # chain = load_qa_chain(
-        #     llm=OpenAI(temperature=0, max_tokens=900),
-        #     memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
-        #     prompt=prompt,
-        #     verbose=True,
-        # )
-
         chain = LLMChain(
             llm=ChatOpenAI(temperature=0, top_p=1, max_tokens=1500),
             memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
