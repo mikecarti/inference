@@ -1,14 +1,14 @@
-from langchain.chains.question_answering import load_qa_chain
+from langchain.chat_models import ChatOpenAI
+from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+from langchain.prompts import PromptTemplate
+from loguru import logger
 
-from src.model.vector_db import VectorDataBase
 from src.model import task_manager
 from src.model.prompts import PROMPT_TEMPLATE
+from src.model.vector_db import VectorDataBase
 
-from loguru import logger
-from langchain import OpenAI, LLMChain
-from langchain.prompts import PromptTemplate
 
 class Chain:
     def __init__(self, db: VectorDataBase):

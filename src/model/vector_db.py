@@ -21,7 +21,7 @@ class VectorDataBase:
         self.data_path = "data/data.csv"
         self.db_path = "faiss_index"
 
-        self.embeddings = self._init_embedddings(embeddings)
+        self.embeddings = self._init_embeddings(embeddings)
         self.db = self._specify_db()
 
     async def amanual_search(self, query, verbose=True, k_nearest=4) -> (str, str):
@@ -39,7 +39,8 @@ class VectorDataBase:
         else:
             return similar_doc.metadata['answer']
 
-    def _vectorize_docs(self, df: pd.DataFrame, embeddings):
+    @staticmethod
+    def _vectorize_docs(df: pd.DataFrame, embeddings):
         """
         df - DataFrame that has 'question' column
         embeddings - usually OpenAIEmbeddings
@@ -123,7 +124,8 @@ class VectorDataBase:
             raise InvalidAnswerException("Invalid answer")
         return vector_db
 
-    def _init_embedddings(self, embeddings):
+    @staticmethod
+    def _init_embeddings(embeddings):
         if not embeddings:
             return OpenAIEmbeddings()
         else:

@@ -3,8 +3,9 @@ import copy
 import threading
 from asyncio import QueueEmpty
 from dataclasses import dataclass
+
+from langchain.memory import ConversationBufferWindowMemory
 from loguru import logger
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 
 
 @dataclass()
@@ -22,7 +23,7 @@ class User:
         self.memory = memory
         self.id = user_id
         self.name = name
-        self.memory_life_time_seconds = memory_life_time_seconds  # seconds and user is accounted as a user with solved problem
+        self.memory_life_time_seconds = memory_life_time_seconds
         self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self._reset_memory)
         self.message_queue = asyncio.Queue()
         self.log_resets = False
