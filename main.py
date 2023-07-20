@@ -82,7 +82,7 @@ async def on_startup_launch(args):
 def main():
     os.environ["PYTHONASYNCIODEBUG"] = "1"
     # langchain.debug = True
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup_launch)
+    executor.start_polling(dp, skip_updates=False, on_startup=on_startup_launch)
 
 if __name__ == '__main__':
     main()
