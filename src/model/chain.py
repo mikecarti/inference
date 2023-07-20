@@ -10,9 +10,6 @@ from loguru import logger
 from langchain import OpenAI, LLMChain
 from langchain.prompts import PromptTemplate
 
-PAID_API_KEY = "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"
-
-
 class Chain:
     def __init__(self, db: VectorDataBase):
         self.chain = self.init_chain()
