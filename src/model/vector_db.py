@@ -7,12 +7,10 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 import pandas as pd
+
+from src.model.exceptions import InvalidAnswerException
 from src.model.utils import wrap
 from shutil import rmtree
-
-
-class InvalidAnswerException(Exception):
-    pass
 
 
 class VectorDataBase:

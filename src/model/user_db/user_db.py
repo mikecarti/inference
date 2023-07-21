@@ -3,9 +3,7 @@ from langchain.memory import ConversationBufferWindowMemory
 from .user import User
 from typing import *
 
-
-class UserExistsException(Exception):
-    pass
+from ..exceptions import UserExistsException
 
 
 class UserDB:
