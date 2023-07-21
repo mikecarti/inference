@@ -5,3 +5,4 @@ src/model/user_db/__pycache__
 .idea
 src/controller/__pycache__
 logs.log
+data/old_data.csv

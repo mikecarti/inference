@@ -1,4 +1,3 @@
-import easyocr
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -15,16 +14,56 @@ class ReceiptOCR:
         Note that the first time you use easyocr lib on you machine
         the pytorch model will be downloaded
         """
-        self.reader = easyocr.Reader(['ru', 'en'], gpu=False)
+        # self.reader = easyocr.Reader(['ru', 'en'], gpu=False, )
+        self.reader = None
+        self.temp_doc_file_path = f"data/temp_doc/temp_receipt.pdf"
         self.prompt_template = """
         На вход тебе будет дана информация с банковского чека.
-        Твоя задача - определить, успешно ли прошла транзакция.
+        Твоя задача - описать главную информацию и определить, успешно ли прошла транзакция.
+        
+        Пример: 
+        Аггрегируя информацию заметил, что
+        Сумма перевода: "указанное кол-во рублей в оплате"
+        Комиссия: "указанная комиссия"
+        Карта отправителя: "указанная карта"
+        Банк получателя: "указанный банк"
+        ФИО отправителя: "указанное фио отправителя"
+        ФИО получателя: "указанное фио получателя"
+        Номер операции: "указанный номер операции"
+        Номер телефона получателя: "указанный номер получателя"
+        Дата и время: "Указанные дата и время"
+        Другие данные: "Остальные важные данные, если таковые имеются"
+        
+        Вердикт: транзакция прошла "успешно/ не успешно"
+        
         Информация с чека: 
         {check}
+        
+        Ответ:
+        Аггрегируя информацию заметил, что
+        Вердикт: транзакция прошла...
         """
         self.chain = LLMChain(
             llm=ChatOpenAI(temperature=0),
             prompt=PromptTemplate(template=self.prompt_template, input_variables=["check"]))
+
+    def check_transactions_status(self, doc):
+        """
+        This method uses LLM to work with text.
+        Feel free to change self.prompt_template for your needs.
+        """
+        self._asave_temp_doc(doc)
+        text = self._pdf2text()
+        return self.chain.run(check=text)
+
+    async def acheck_transactions_status(self, doc):
+        """
+        This method uses LLM to work with text.
+        Feel free to change self.prompt_template for your needs.
+        """
+        await self._asave_temp_doc(doc)
+        text = self._pdf2text()
+        return await self.chain.arun(check=text)
 
     def read_text(self, img, concat: bool = True) -> str:
         """
@@ -38,38 +77,13 @@ class ReceiptOCR:
 
         return words
 
-    def _pdf2img(self, filepath: str):
-        """
-        This method converts PDF to image.
-        Since we doing it only for pdf check file
-        we need to read only zero page ('cause check contains only one page)
-        Note that this method returns bytes.
-        """
-        with fitz.open(filepath) as doc:
+    def _pdf2text(self):
+        with fitz.open(self.temp_doc_file_path) as doc:
             check_page = doc.load_page(0)
-            pixmap = check_page.get_pixmap(dpi=300)
+            text = check_page.get_text()
+        return text
 
-        return pixmap.tobytes()
-
-    def check_transactions_status(self, filepath: str):
-        """
-        This method uses LLM to work with text.
-        Feel free to change self.prompt_template for your needs.
-        """
-        img = self._pdf2img(filepath)
-        text = self.read_text(img)
-        return self.chain.run(check=text)
-    
-    async def acheck_transactions_status(self, filepath: str):
-        """
-        This method uses LLM to work with text.
-        Feel free to change self.prompt_template for your needs.
-        """
-        img = self._pdf2img(filepath)
-        text = self.read_text(img)
-        return await self.chain.arun(check=text)
-
-
-if __name__ == "__main__":
-    ocr = ReceiptOCR()
-    print(ocr.check_transactions_status("Receipt.pdf"))
+    async def _asave_temp_doc(self, doc):
+        await doc.download(
+            destination_file=self.temp_doc_file_path,
+        )

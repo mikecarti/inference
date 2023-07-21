@@ -3533,3 +3533,191 @@ Google Play) и скачайте приложение для совершени�
 выполняются все условия для этого (например, сумма ставки больше 5000р.)? Если да, то для
 использования кешбека необходимо ввести промокод CASHBACK5. Пожалуйста, проверь это и дай мне знать,
 если у тебя возникнут еще вопросы.
+2023-07-21 09:44:14.700 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:44:16.306 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:44:16.823 | INFO     | __main__:process_queues:64 - Message processing task started
+2023-07-21 09:46:40.732 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:46:42.065 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:46:43.105 | INFO     | __main__:process_queues:64 - Message processing task started
+2023-07-21 09:47:14.907 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:47:15.804 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:47:16.302 | INFO     | __main__:process_queues:65 - Message processing task started
+2023-07-21 09:47:28.387 | DEBUG    | __main__:process_document:77 - File from user mikecarti is processing
+2023-07-21 09:50:10.714 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:50:12.112 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:50:27.099 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:50:28.839 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:50:29.506 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 09:50:35.932 | DEBUG    | __main__:add_message_to_queue:49 - Message from user mikecarti added to queue: <re>
+2023-07-21 09:50:36.175 | DEBUG    | src.model.chain:amanual_search:31 - SEARCHING IN VECTOR DB THIS: 
+ re
+2023-07-21 09:50:37.344 | DEBUG    | src.model.vector_db:amanual_search:29 - Score: 0.6213627439280736
+2023-07-21 09:50:37.344 | DEBUG    | src.model.vector_db:amanual_search:32 - Real Question: re
+2023-07-21 09:50:37.344 | DEBUG    | src.model.vector_db:amanual_search:33 - Found Question: я хочу изменить номер мобильного телефона
+2023-07-21 09:50:38.951 | DEBUG    | __main__:send_message:85 - Answer: Извините, но я не могу помочь с этой проблемой.
+2023-07-21 09:51:07.499 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:51:08.599 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:51:09.196 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 09:51:12.264 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 09:55:23.574 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 09:55:25.484 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 09:55:26.026 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 09:55:37.403 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:06:13.672 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:06:52.775 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:06:58.356 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:06:59.539 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:07:00.003 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:07:08.826 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:08:31.426 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:08:33.027 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:08:33.474 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:08:37.538 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:11:29.573 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:11:31.067 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:11:31.616 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:11:40.542 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:13:11.208 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:13:12.898 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:13:13.449 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:13:23.126 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:14:18.252 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:14:19.913 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:14:20.339 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:14:24.442 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:14:37.092 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:14:37.906 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:14:38.351 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:14:42.180 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:15:59.910 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:16:01.231 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:16:01.792 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:16:07.665 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:16:35.698 | DEBUG    | __main__:send_message:85 - Answer: Для определения успешности транзакции необходимо обратить внимание на следующие факторы:  1. Сумма
+перевода: В данном случае сумма перевода составляет 6000.00 ₽. Если у отправителя на счету
+достаточно средств для осуществления перевода, то это может указывать на успешность транзакции.  2.
+Комиссия: В данном случае комиссия составляет 0.00 ₽, что означает отсутствие дополнительных
+расходов при переводе. Это также может указывать на успешность транзакции.  3. Карта отправителя:
+Номер карты отправителя указан как •••• 9080. Если эта карта принадлежит отправителю и имеет
+достаточный баланс для перевода, то это может указывать на успешность транзакции.  4. Банк
+получателя: В данном случае банк получателя указан как "Тинькофф Банк". Если этот банк является
+доверенным и имеет хорошую репутацию, то это может указывать на успешность транзакции.  5. ФИО
+получателя перевода: В данном случае ФИО получателя перевода указано как "Елена Владимировна А.".
+Если это соответствует ожидаемому получателю перевода, то это может указывать на успешность
+транзакции.  6. Номер операции в СБП: Номер операции в СБП указан как
+"A3201140548601240000070011031101". Если этот номер соответствует ожидаемому номеру операции, то это
+может указывать на успешность транзакции.  7. Номер телефона получателя: Номер телефона получателя
+указан как "+7 903 272-24-33". Если этот номер соответствует ожидаемому номеру телефона получателя,
+то это может указывать на успешность транзакции.  8. ФИО отправителя: В данном случае ФИО
+отправителя указано как "Даниил Геннадьевич Т.". Если это соответствует ожидаемому отправителю
+перевода, то это может указывать на успешность транзакции.  9. Чек по операции: Чек по операции
+указан с датой и временем "20 июля 2023 17:05:53 (МСК)". Если эта дата и время соответствуют
+ожидаемым, то это может указывать на успешность транзакции.  Исходя из предоставленной информации,
+можно сделать предположение, что транзакция прошла успешно. Однако, для окончательного подтверждения
+успешности транзакции необходимо проверить ее статус в банковской системе или обратиться в банк для
+получения дополнительной информации.
+2023-07-21 10:18:21.983 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:18:23.720 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:18:24.154 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:18:33.275 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:18:35.792 | DEBUG    | __main__:send_message:85 - Answer: Успешно.
+2023-07-21 10:23:42.324 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:23:43.081 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:23:43.587 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:23:47.076 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:23:48.963 | DEBUG    | __main__:send_message:85 - Answer: успешно
+2023-07-21 10:25:25.094 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:25:26.654 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:25:27.150 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:25:32.210 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:25:34.724 | DEBUG    | __main__:send_message:85 - Answer: успешно
+2023-07-21 10:25:44.884 | INFO     | src.model.vector_db:_specify_db:111 - 
+(1)Load vector db
+(2)Create one?
+(3)Update with new data
+	 [1/2/3]
+2023-07-21 10:25:47.511 | INFO     | src.model.vector_db:_load_vector_db:69 - Database loaded from local files
+2023-07-21 10:25:47.925 | INFO     | __main__:process_queues:55 - Message processing task started
+2023-07-21 10:25:53.434 | DEBUG    | __main__:process_document:67 - File from user mikecarti is processing
+2023-07-21 10:26:01.763 | DEBUG    | __main__:send_message:85 - Answer: Аггрегируя информацию заметил, что: - Сумма перевода: 6000.00 ₽ - Комиссия: 0.00 ₽ - Карта
+отправителя: •••• 9080 - Банк получателя: Тинькофф Банк - ФИО отправителя: Перевод по СБП - ФИО
+получателя: Елена Владимировна А. - Номер операции: A3201140548601240000070011031101 - Номер
+телефона получателя: +7 903 272-24-33 - Дата и время: 20 июля 2023 17:05:53 (МСК) - Другие данные:
+Чек по операции  Вердикт: транзакция прошла успешно
+2023-07-21 10:27:07.643 | DEBUG    | __main__:process_document:67 - File from user svetadomoi is processing

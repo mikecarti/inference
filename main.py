@@ -44,16 +44,7 @@ async def send_welcome(message: types.Message) -> None:
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
 
-@dp.message_handler()
-async def process_message(message: types.Message) -> None:
-    if message.document:
-        await add_message_to_queue(message)
-    elif message.text:
-        await process_document(message)
-    else:
-        raise InvalidMessageTypeException(f"Message data: {message}")
-
-
+@dp.message_handler(content_types=['text'])
 async def add_message_to_queue(message: types.Message) -> None:
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
@@ -70,9 +61,10 @@ async def process_queues() -> None:
             if message:
                 await answer_message(message)
 
-
+@dp.message_handler(content_types=['document'])
 async def process_document(message: types.Message) -> None:
     """Processes files sent by user (but not images)"""
+    logger.debug(f"File from user {message.from_user.username} is processing")
     doc = message.document
     answer = await receipt_checker.acheck_transactions_status(doc)
     await send_message(message, answer)
