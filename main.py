@@ -1,13 +1,12 @@
 import asyncio
 import logging
 import os
-import sys
 
 import langchain
 from loguru import logger
-from src.model.utils import init_logging
 from aiogram import Bot, Dispatcher, executor, types
 from src.model.chain import Chain
+from src.model.ocr_checker import ReceiptOCR
 from src.model.vector_db import VectorDataBase
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
@@ -29,10 +28,10 @@ dp = Dispatcher(bot)
 user_db = UserDB()
 vector_db = VectorDataBase()
 chain = Chain(vector_db)
+receipt_checker = ReceiptOCR()
 
 # Initialize View
 view = View()
-
 
 
 
@@ -44,8 +43,18 @@ async def send_welcome(message: types.Message):
     """
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
+@dp.handler
 
 @dp.message_handler()
+async def process_message(message: types.Message):
+    if message.document:
+        process_document(message)
+    elif message.text:
+        add_message_to_queue(message)
+    else:
+        raise
+
+
 async def add_message_to_queue(message: types.Message):
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
