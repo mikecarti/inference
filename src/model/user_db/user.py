@@ -5,6 +5,8 @@ from asyncio import QueueEmpty
 from dataclasses import dataclass
 
 from langchain.memory import ConversationBufferWindowMemory
+from langchain.schema import BaseMemory
+from aiogram import types
 from loguru import logger
 
 
@@ -28,15 +30,15 @@ class User:
         self.message_queue = asyncio.Queue()
         self.log_resets = False
 
-    def get_memory(self):
+    def get_memory(self) -> BaseMemory:
         self._reset_countdown()
         return self.memory
 
-    async def add_to_queue(self, message: AbstractMessage):
+    async def add_to_queue(self, message: AbstractMessage) -> None:
         # this method may be blocking if queue has element number limit
         await self.message_queue.put(message)
 
-    async def get_from_queue(self):
+    async def get_from_queue(self) -> types.Message:
         try:
             message = self.message_queue.get_nowait()
         except QueueEmpty:

@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+from typing import Any
 
 import langchain
 from loguru import logger
@@ -11,6 +12,7 @@ from src.model.vector_db import VectorDataBase
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
 from src.view.view import View
+from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
 API_TOKEN = '6309821654:AAG2P_3WmwQfoG7hOrhLZDv665nN1IeU4jQ'
@@ -34,36 +36,33 @@ receipt_checker = ReceiptOCR()
 view = View()
 
 
-
-
 @dp.message_handler(commands=['start', 'help'])
-async def send_welcome(message: types.Message):
+async def send_welcome(message: types.Message) -> None:
     """
     This handler will be called when user sends `/start` or `/help` command
     """
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
-@dp.handler
 
 @dp.message_handler()
-async def process_message(message: types.Message):
+async def process_message(message: types.Message) -> None:
     if message.document:
-        process_document(message)
+        await add_message_to_queue(message)
     elif message.text:
-        add_message_to_queue(message)
+        await process_document(message)
     else:
-        raise
+        raise InvalidMessageTypeException(f"Message data: {message}")
 
 
-async def add_message_to_queue(message: types.Message):
+async def add_message_to_queue(message: types.Message) -> None:
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
     await user_db.add_to_queue(user_id, message)
 
 
-async def process_messages():
+async def process_queues() -> None:
     logger.info("Message processing task started")
-    sleep_for = 0.0
+    sleep_for = 0.3
     while True:
         await asyncio.sleep(sleep_for)
         for user_id in user_db.get_user_ids():
@@ -72,8 +71,14 @@ async def process_messages():
                 await answer_message(message)
 
 
-@dp.message_handler()
-async def answer_message(message: types.Message):
+async def process_document(message: types.Message) -> None:
+    """Processes files sent by user (but not images)"""
+    doc = message.document
+    answer = await receipt_checker.acheck_transactions_status(doc)
+    await send_message(message, answer)
+
+
+async def answer_message(message: types.Message) -> None:
     user_id = message.from_user.id
     user_msg = message.text
 
@@ -81,17 +86,23 @@ async def answer_message(message: types.Message):
     answer = await chain.apredict(memory, user_msg)
 
     answer = view.process_answer(answer)
-    logger.debug(f"Answer: {wrap(answer)}")
-    await message.reply(answer)
+    await send_message(message, answer)
 
 
-async def on_startup_launch(args):
-    asyncio.create_task(process_messages())
+async def send_message(user_message: types.Message, bot_answer: str) -> None:
+    logger.debug(f"Answer: {wrap(bot_answer)}")
+    await user_message.reply(bot_answer)
 
-def main():
+
+async def on_startup_launch(args: Any) -> None:
+    asyncio.create_task(process_queues())
+
+
+def main() -> None:
     os.environ["PYTHONASYNCIODEBUG"] = "1"
     # langchain.debug = True
     executor.start_polling(dp, skip_updates=False, on_startup=on_startup_launch)
+
 
 if __name__ == '__main__':
     main()

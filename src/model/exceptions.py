@@ -4,3 +4,7 @@ class InvalidAnswerException(Exception):
 
 class UserExistsException(Exception):
     pass
+
+
+class InvalidMessageTypeException(Exception):
+    pass
