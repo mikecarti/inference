@@ -10,8 +10,8 @@ class UserDB:
 
     def __init__(self):
         self.db = {}
-        self.store_k_interactions = 1
-        self.memory_life_time_seconds = 60 * 2
+        self.store_k_interactions = 2
+        self.memory_life_time_seconds = 60 * 5
 
     async def add_to_queue(self, user_id, message):
         if not self._user_exists(user_id):
