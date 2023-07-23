@@ -43,6 +43,12 @@ async def send_welcome(message: types.Message) -> None:
     """
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
+@dp.message_handler(commands=['clear'])
+async def send_welcome(message: types.Message) -> None:
+    user_id = message.from_user.id
+    user_db._get(user_id)._reset_memory()
+    await message.reply("Память переписки очищена!")
+
 
 @dp.message_handler(content_types=['text'])
 async def add_message_to_queue(message: types.Message) -> None:

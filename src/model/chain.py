@@ -53,7 +53,7 @@ class Chain:
         )
 
         chain = LLMChain(
-            llm=ChatOpenAI(temperature=0, max_tokens=1500),
+            llm=ChatOpenAI(temperature=0, max_tokens=1500, model="gpt-3.5-turbo-16k"),
             memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
             prompt=prompt,
             verbose=True,
