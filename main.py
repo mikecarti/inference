@@ -43,6 +43,7 @@ async def send_welcome(message: types.Message) -> None:
     """
     await message.reply("Hi!\nI'm DeskHelp Bot!")
 
+
 @dp.message_handler(commands=['clear'])
 async def send_welcome(message: types.Message) -> None:
     user_id = message.from_user.id
@@ -66,6 +67,7 @@ async def process_queues() -> None:
             message = await user_db.get_from_queue(user_id)
             if message:
                 await answer_message(message)
+
 
 @dp.message_handler(content_types=['document'])
 async def process_document(message: types.Message) -> None:
