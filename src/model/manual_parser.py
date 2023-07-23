@@ -1,7 +1,7 @@
 import json
 import re
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Union, Dict
 
 manual_example = """Manual: Часть мануала для технической поддержки:  Проблема: У человека есть несколько учётных записей на один и тот же номер телефона.
 Решение: 
@@ -14,7 +14,7 @@ manual_example = """Manual: Часть мануала для техническ�
 @dataclass
 class FunctionPrototype:
     function_name: str
-    kwargs: List[str]
+    kwargs: Dict
 
 
 class ManualParser:

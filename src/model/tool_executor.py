@@ -15,9 +15,11 @@ class ToolExecutor:
     def execute(self, function: FunctionPrototype) -> Any:
         func_name = function.function_name
         kwargs = function.kwargs
+        return self(func_name, **kwargs)
 
     def execute_all(self, functions: List[FunctionPrototype]) -> Any:
         # For now only works with one function properly
+        res = None
         for f in functions:
             res = self.execute(f)
         return res
