@@ -7,22 +7,29 @@ from loguru import logger
 
 from src.model import task_manager
 from src.model.prompts import PROMPT_TEMPLATE
+from src.model.tool_executor import ToolExecutor
 from src.model.vector_db import VectorDataBase
+from src.model.manual_parser import ManualParser
 
 
 class Chain:
     def __init__(self, db: VectorDataBase):
         self.chain = self.init_chain()
         self.vector_db: VectorDataBase = db
+        self.tool_executor = ToolExecutor()
+        self.parser = ManualParser()
 
     async def apredict(self, memory, query):
         manual_part = await self.amanual_search(memory, query)
-        response = await self.arun_with_memory(manual_part, memory, query)
+        manual_text, functions = self.parser.process_manual(manual_part)
+        result_of_execution = self.tool_executor.execute_all(functions)
+        manual_text = fill_info_from_function(manual_text, result_of_execution)
+        response = await self.arun_with_memory(manual_text, memory, query)
         return response
 
     async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
         await self._set_memory(memory)
-        response = await self.chain.arun(manual_part=manual_part, question=query)
+        response = await self.chain.arun(manual_part=manual_part, question=query, input_documents=[])
         return response
 
     async def amanual_search(self, memory, query):
