@@ -24,7 +24,7 @@ Also dont mension that your knowledge is based on Manual. Just follow it's instr
 Manual is attached below
 {manual_part}
 
-Generate one response from the HelpDesk.
+Generate one response from the HelpDesk that continues chat history from above.
 
 HelpDesk:
 """
