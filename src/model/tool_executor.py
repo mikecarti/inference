@@ -59,7 +59,8 @@ class ToolExecutor:
             "BettingGuru",
             "RiskTaker"
         ]
-        return random.sample(nicknames, 3)
+        sample = random.sample(nicknames, 3)
+        return ','.join(sample)
 
 
 if __name__ == "__main__":
