@@ -20,7 +20,7 @@ Manual is attached below
 
 {chat_history}
 
-User's question: {question}
+User: {question}
 
 HelpDesk:
 """
