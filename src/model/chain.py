@@ -30,7 +30,8 @@ class Chain:
 
     async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
         await self._set_memory(memory)
-        response = await self.chain.arun(manual_part=manual_part, question=query, input_documents=[])
+        logger.debug(f"Manual after formatting: \n{manual_part}")
+        response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
     async def amanual_search(self, memory, query):
