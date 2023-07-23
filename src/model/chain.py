@@ -3,6 +3,7 @@ from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
+from langchain.schema import SystemMessage
 from loguru import logger
 
 from src.model import prompt_engineer
@@ -24,6 +25,7 @@ class Chain:
         manual_text, functions = self.parser.process_manual(manual_part)
         result_of_execution = self.tool_executor.execute_all(functions)
         manual_text = prompt_engineer.fill_info_from_function(manual_text, result_of_execution)
+        self._set_llm_reminder(memory)
         response = await self.arun_with_memory(manual_text, memory, query)
         logger.debug(f"Answer: ", response)
         return response
@@ -33,6 +35,12 @@ class Chain:
         logger.debug(f"Manual after formatting: {manual_part}")
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
+
+    @staticmethod
+    def _set_llm_reminder(memory):
+        # save a reminder
+        system_input = SystemMessage(content="Remember to follow 3 steps provided above to answer this question.")
+        memory.save_context(system_input)
 
     async def amanual_search(self, memory, query):
         user_history = await prompt_engineer.acompose_user_history(memory=memory, query=query)
