@@ -1,3 +1,4 @@
+import random
 from random import randint
 from typing import Any, List
 
@@ -27,22 +28,38 @@ class ToolExecutor:
         return res
 
     def change_phone_number(self, phone_number: str) -> str:
-        if self._check_multi_acc():
-            return "Замечена множественная регистрация. " \
-                   "Пожалуйста, обратитесь на нашу почту help@example.com" \
-                   "и прикрепите в письме ваши документы (перечень док-ов). Вам помогут сменить номер телефона."
-
-        return "Ваш номер телефона успешно изменен. (Вызов функции смены номера телефона)"
-
-    def _check_multi_acc(self) -> bool:
-        num = randint(0, 9)
-        if num >= 5:
-            return True
-
-        return False
+        return f"Скажи пользователю следующее: Замечена множественная регистрация. На ваш номер зарегистрировано 3 " \
+               f"аккаунта:  {self._get_random_nicknames()}" \
+               f"Пожалуйста, обратитесь на нашу почту help@example.com" \
+               "и прикрепите в письме ваши документы (перечень док-ов). Вам помогут установить единый аккаунт."
 
     def get_cashback_amount(self, uid: str) -> int:
         return randint(0, 278)
+
+    def _get_random_nicknames(self):
+        nicknames = [
+            "LuckyGambler",
+            "BetMaster",
+            "WinningStreak",
+            "LadyLuck",
+            "HighRoller",
+            "BettingPro",
+            "LuckyStar",
+            "BettingWhiz",
+            "AceGambler",
+            "CashCow",
+            "ProPunter",
+            "BetGenius",
+            "FortuneSeeker",
+            "BettingWizard",
+            "LuckyCharm",
+            "BetAddict",
+            "GambleKing",
+            "SuccessBetter",
+            "BettingGuru",
+            "RiskTaker"
+        ]
+        return random.sample(nicknames, 3)
 
 
 if __name__ == "__main__":

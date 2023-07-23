@@ -2,6 +2,7 @@ import json
 import re
 from dataclasses import dataclass
 from typing import List, Union, Dict
+from loguru import logger
 
 manual_example = """Manual: Часть мануала для технической поддержки:  Проблема: У человека есть несколько учётных записей на один и тот же номер телефона.
 Решение: 
@@ -45,6 +46,7 @@ class ManualParser:
 
         functions_plain_text = [p for p in parts if p.startswith("<")]
         functions_plain_json = [self._remove_arrows(f) for f in functions_plain_text]
+        logger.debug("Plain Functions: ", functions_plain_json)
         function_dicts = [json.loads(f) for f in functions_plain_json]
         functions = [FunctionPrototype(function_name=func["function_name"], kwargs=func["kwargs"]) for func in
                      function_dicts]
