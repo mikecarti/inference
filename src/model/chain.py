@@ -24,13 +24,13 @@ class Chain:
         manual_text, functions = self.parser.process_manual(manual_part)
         result_of_execution = self.tool_executor.execute_all(functions)
         manual_text = prompt_engineer.fill_info_from_function(manual_text, result_of_execution)
-        # logger.debug('_'*100, "Prompt after formatting:\n", manual_text, '_'*100)
         response = await self.arun_with_memory(manual_text, memory, query)
+        logger.debug(f"Answer: ", response)
         return response
 
     async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
         await self._set_memory(memory)
-        logger.debug(f"Manual after formatting: \n{manual_part}")
+        logger.debug(f"Manual after formatting: {manual_part}")
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
