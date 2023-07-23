@@ -55,7 +55,7 @@ class ManualParser:
         return s.replace("<", "").replace(">", "")
 
     def _manual_has_functions(self, manual_text: str):
-        if re.match(self.regexp_functions, manual_text):
+        if re.search(self.regexp_functions, manual_text):
             return True
         else:
             return False
