@@ -12,5 +12,8 @@ async def acompose_user_history(memory: ConversationBufferMemory, query: str) ->
 
     return "\n".join(all_human_messages)
 
+
 def fill_info_from_function(manual_text: str, result_of_execution: str | int) -> str:
+    if not result_of_execution:
+        return manual_text
     return manual_text.format(function_result=str(result_of_execution))

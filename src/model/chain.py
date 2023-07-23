@@ -23,7 +23,7 @@ class Chain:
         manual_part = await self.amanual_search(memory, query)
         manual_text, functions = self.parser.process_manual(manual_part)
         result_of_execution = self.tool_executor.execute_all(functions)
-        manual_text = fill_info_from_function(manual_text, result_of_execution)
+        manual_text = prompt_engineer.fill_info_from_function(manual_text, result_of_execution)
         response = await self.arun_with_memory(manual_text, memory, query)
         return response
 
