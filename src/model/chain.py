@@ -35,8 +35,10 @@ class Chain:
         return response
 
     async def amanual_search(self, memory, query):
-        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
-        manual_part = await self.vector_db.amanual_search(query)
+        user_history = await prompt_engineer.acompose_user_history(memory=memory, query=query)
+
+        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
+        manual_part = await self.vector_db.amanual_search(user_history)
         return manual_part
 
     @staticmethod
