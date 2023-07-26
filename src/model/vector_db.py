@@ -34,7 +34,7 @@ class VectorDataBase:
 
         similar_doc = similar_docs[0]
         if verbose:
-            self._log_search(messages, similar_doc)
+            self._log_search(messages[-1], similar_doc)
 
         return similar_doc.metadata['answer']
 
@@ -45,7 +45,7 @@ class VectorDataBase:
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
         if verbose:
-            self._log_search(query, similar_doc, score)
+            self._log_search(messages[-1], similar_doc, score)
 
         if score < self.threshold:
             return "Tell user that you can not help with that problem"
