@@ -1,6 +1,8 @@
 import codecs
+from typing import List
 
 import chardet as chardet
+import numpy as np
 from loguru import logger
 from langchain.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -22,20 +24,40 @@ class VectorDataBase:
         self.embeddings = self._init_embeddings(embeddings)
         self.db = self._specify_db()
 
-    async def amanual_search(self, query, verbose=True, k_nearest=4) -> (str, str):
+    async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
+        messages_embeddings = [self.embeddings.embed_query(msg) for msg in messages]
+        weights = [2 ** i for i in range(len(messages_embeddings))]
+        normalized_weights = np.array(weights) / np.sum(weights)
+        weighted_embeddings = np.multiply(normalized_weights, messages_embeddings)
+        weighted_sum = list(np.sum(weighted_embeddings, axis=0))
+        similar_docs = await self.db.asimilarity_search_by_vector(weighted_sum, k=k_nearest)
+
+        similar_doc = similar_docs[0]
+        if verbose:
+            self._log_search(messages, similar_doc)
+
+        return similar_doc.metadata['answer']
+
+    async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> (str, str):
+        query = ' '.join(messages)
+
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query, k=k_nearest)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
-        logger.debug(f"Score: {score}")
-
         if verbose:
-            logger.debug(f"Real Question: {wrap(query)}")
-            logger.debug(f"Found Question: {similar_doc.page_content}")
+            self._log_search(query, similar_doc, score)
 
         if score < self.threshold:
             return "Tell user that you can not help with that problem"
         else:
             return similar_doc.metadata['answer']
+
+    def _log_search(self, query, similar_doc, score=None):
+        if score:
+            logger.debug(f"Score: {score}")
+        logger.debug(f"Real Question: {wrap(str(query))}")
+        logger.debug(f"Found Question: {similar_doc.page_content}")
+
 
     @staticmethod
     def _vectorize_docs(df: pd.DataFrame, embeddings):
@@ -93,20 +115,6 @@ class VectorDataBase:
         df.columns = ['id', 'question', 'answer']
         return df
 
-    def _set_encoding_of_data_file(self, needed_encoding):
-        with open(self.data_path, 'rb') as f:
-            raw_data = f.read(500)
-        # Detect the encoding of the raw data
-        current_encoding = chardet.detect(raw_data)['encoding']
-        logger.info(
-            f"While extracting data to vector DB, encoding found out to be {current_encoding}. Converting to UTF-8...")
-        # Translate file encoding to needed encoding
-        with codecs.open(self.data_path, 'r', encoding=current_encoding) as f:
-            content = f.read()
-        # Open a new UTF-8 encoded file and write the content
-        with codecs.open(self.data_path, 'w', encoding=needed_encoding) as f:
-            f.write(content)
-
     def _specify_db(self):
         logger.info("\n(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
         ans = input()
@@ -123,7 +131,7 @@ class VectorDataBase:
         return vector_db
 
     @staticmethod
-    def _init_embeddings(embeddings):
+    def _init_embeddings(embeddings) -> OpenAIEmbeddings:
         if not embeddings:
             return OpenAIEmbeddings()
         else:

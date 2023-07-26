@@ -47,6 +47,7 @@ class Chain:
 
         logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
         manual_part = await self.vector_db.amanual_search(user_history)
+        # manual_part = await self.vector_db.amanual_search_with_weights(user_history)
         return manual_part
 
     @staticmethod
