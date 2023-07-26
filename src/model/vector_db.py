@@ -27,8 +27,8 @@ class VectorDataBase:
     async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
         messages_embeddings = [self.embeddings.embed_query(msg) for msg in messages]
         weights = [2 ** i for i in range(len(messages_embeddings))]
-        logger.debug(f"Weights: {weights}")
         normalized_weights = np.array(weights) / np.sum(weights)
+        logger.debug(f"Weights: {normalized_weights}")
         expanded_weights = np.expand_dims(normalized_weights, axis=-1)
 
         weighted_embeddings = messages_embeddings * expanded_weights
