@@ -1,10 +1,10 @@
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.schema import HumanMessage
 from typing import Union
 
 
-async def acompose_user_history(memory: ConversationBufferMemory, query: str) -> list:
-    history_messages = memory.chat_memory.messages
+async def acompose_user_history(memory: ConversationBufferWindowMemory, query: str) -> list:
+    history_messages = memory.chat_memory.messages[-(memory.k * 2):]
     if not history_messages:
         history_messages = []
     human_messages = [msg for msg in history_messages if type(msg) is HumanMessage]
