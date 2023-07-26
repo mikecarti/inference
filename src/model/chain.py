@@ -6,7 +6,7 @@ from langchain.prompts import PromptTemplate
 from langchain.schema import SystemMessage
 from loguru import logger
 
-from src.model import prompt_engineer
+from src.model.prompt_engineer import fill_info_from_function, acompose_user_history
 from src.model.prompts import PROMPT_TEMPLATE
 from src.model.tool_executor import ToolExecutor
 from src.model.vector_db import VectorDataBase
@@ -22,13 +22,19 @@ class Chain:
 
     async def apredict(self, memory, query):
         manual_part = await self.amanual_search(memory, query)
-        manual_text, functions = self.parser.process_manual(manual_part)
-        result_of_execution = self.tool_executor.execute_all(functions)
-        manual_text = prompt_engineer.fill_info_from_function(manual_text, result_of_execution)
-        self._set_llm_reminder(memory)
+        functions, manual_text = await self.parse_manual(manual_part)
+        result_of_execution = await self.execute_functions(functions)
+        manual_text = fill_info_from_function(manual_text, result_of_execution)
         response = await self.arun_with_memory(manual_text, memory, query)
         logger.debug(f"Answer: ", response)
         return response
+
+    async def execute_functions(self, functions):
+        return self.tool_executor.execute_all(functions)
+
+    async def parse_manual(self, manual_part):
+        manual_text, functions = self.parser.process_manual(manual_part)
+        return functions, manual_text
 
     async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
         await self._set_memory(memory)
@@ -36,14 +42,8 @@ class Chain:
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
-    @staticmethod
-    def _set_llm_reminder(memory):
-        # save a reminder
-        system_input = SystemMessage(content="Remember to follow 3 steps provided above to answer this question.")
-        memory.save_context(system_input)
-
     async def amanual_search(self, memory, query):
-        user_history = await prompt_engineer.acompose_user_history(memory=memory, query=query)
+        user_history = await acompose_user_history(memory=memory, query=query)
 
         logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
         manual_part = await self.vector_db.amanual_search(user_history)
