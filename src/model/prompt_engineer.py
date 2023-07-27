@@ -4,6 +4,9 @@ from typing import Union
 
 
 async def acompose_user_history(memory: ConversationBufferWindowMemory, query: str) -> list:
+    """
+    Returns history with last user message
+    """
     history_messages = memory.chat_memory.messages[-(memory.k * 2):]
     if not history_messages:
         history_messages = []

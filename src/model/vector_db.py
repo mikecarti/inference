@@ -42,14 +42,12 @@ class VectorDataBase:
 
         return similar_doc.metadata['answer']
 
-    async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> (str, str):
-        query = ' '.join(messages)
-
+    async def amanual_search(self, query: str, verbose=True, k_nearest=4) -> (str, str):
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query, k=k_nearest)
         similar_doc = similar_docs[0][0]
         score = similar_docs[0][1]
         if verbose:
-            self._log_search(messages[-1], similar_doc, score)
+            self._log_search(query, similar_doc, score)
 
         if score < self.threshold:
             return "Tell user that you can not help with that problem"
@@ -59,8 +57,8 @@ class VectorDataBase:
     def _log_search(self, query, similar_doc, score=None):
         if score:
             logger.debug(f"Score: {score}")
-        logger.debug(f"Real Question: {wrap(str(query))}")
-        logger.debug(f"Found Question: {similar_doc.page_content}")
+        logger.debug(f"Real Example: {wrap(str(query))}")
+        logger.debug(f"Found Example: {similar_doc.page_content}")
 
 
     @staticmethod

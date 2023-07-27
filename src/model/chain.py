@@ -11,17 +11,20 @@ from src.model.prompts import PROMPT_TEMPLATE
 from src.model.tool_executor import ToolExecutor
 from src.model.vector_db import VectorDataBase
 from src.model.manual_parser import ManualParser
+from src.model.relevance import RelevanceModel
 
 
 class Chain:
     def __init__(self, db: VectorDataBase):
+        self.relevance_model = RelevanceModel()
         self.chain = self.init_chain()
         self.vector_db: VectorDataBase = db
         self.tool_executor = ToolExecutor()
         self.parser = ManualParser()
 
     async def apredict(self, memory, query):
-        manual_part = await self.amanual_search(memory, query)
+        user_history = await acompose_user_history(memory=memory, query=query)
+        manual_part = await self.amanual_search(user_history)
         functions, manual_text = await self.parse_manual(manual_part)
         result_of_execution = await self.execute_functions(functions)
         manual_text = fill_info_from_function(manual_text, result_of_execution)
@@ -42,13 +45,15 @@ class Chain:
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
-    async def amanual_search(self, memory, query):
-        user_history = await acompose_user_history(memory=memory, query=query)
-
-        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
+    async def amanual_search(self, messages: list):
+        text = ' '.join(messages)
+        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {text}")
         # manual_part = await self.vector_db.amanual_search(user_history)
-        manual_part = await self.vector_db.amanual_search_with_weights(user_history)
+        manual_part = await self.vector_db.amanual_search(text)
         return manual_part
+
+    async def determine_relevant_part(self, user_history: list) -> list:
+        return await self.relevance_model.predict_relevant_part(user_history)
 
     @staticmethod
     def get_most_similar_result(query, db):
