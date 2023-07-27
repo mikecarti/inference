@@ -24,8 +24,9 @@ class Chain:
 
     async def apredict(self, memory, query):
         user_history = await acompose_user_history(memory=memory, query=query)
-        manual_part = await self.amanual_search(user_history)
-        functions, manual_text = await self.parse_manual(manual_part)
+        manual_parts = await self.amanual_search(user_history, retrieve_top_k=5)
+        best_manual = await self.aselect_best_manual(question=query, manuals=manual_parts, conversation_history=memory)
+        functions, manual_text = await self.parse_manual(best_manual)
         result_of_execution = await self.execute_functions(functions)
         manual_text = fill_info_from_function(manual_text, result_of_execution)
         response = await self.arun_with_memory(manual_text, memory, query)
@@ -45,15 +46,15 @@ class Chain:
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
-    async def amanual_search(self, messages: list):
+    async def amanual_search(self, messages: list, retrieve_top_k=1):
         text = ' '.join(messages)
         logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {text}")
         # manual_part = await self.vector_db.amanual_search(user_history)
-        manual_part = await self.vector_db.amanual_search(text)
-        return manual_part
+        manual_parts = await self.vector_db.amanual_search(text, k_nearest=retrieve_top_k)
+        return manual_parts
 
-    async def determine_relevant_part(self, user_history: list) -> list:
-        return await self.relevance_model.predict_relevant_part(user_history)
+    def aselect_best_manual(self, question, manuals, conversation_history):
+        pass
 
     @staticmethod
     def get_most_similar_result(query, db):

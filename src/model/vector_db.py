@@ -1,4 +1,5 @@
 import codecs
+from dataclasses import dataclass
 from typing import List
 
 import chardet as chardet
@@ -15,6 +16,12 @@ from src.model.utils import wrap
 from shutil import rmtree
 
 
+@dataclass
+class ManualDocument:
+    key: str
+    value: str
+
+
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
@@ -24,42 +31,16 @@ class VectorDataBase:
         self.embeddings = self._init_embeddings(embeddings)
         self.db = self._specify_db()
 
-    async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
-        messages_embeddings = [self.embeddings.embed_query(msg) for msg in messages]
-        weights = [2 ** i for i in range(len(messages_embeddings))]
-        normalized_weights = np.array(weights) / np.sum(weights)
-        logger.debug(f"Weights: {normalized_weights}")
-        expanded_weights = np.expand_dims(normalized_weights, axis=-1)
-
-        weighted_embeddings = messages_embeddings * expanded_weights
-        weighted_messages_sum = np.sum(weighted_embeddings, axis=0).tolist()
-
-        similar_docs = await self.db.asimilarity_search_by_vector(weighted_messages_sum, k=k_nearest)
-
-        similar_doc = similar_docs[0]
-        if verbose:
-            self._log_search(messages[-1], similar_doc)
-
-        return similar_doc.metadata['answer']
-
-    async def amanual_search(self, query: str, verbose=True, k_nearest=4) -> (str, str):
-        similar_docs = await self.db.asimilarity_search_with_relevance_scores(query, k=k_nearest)
-        similar_doc = similar_docs[0][0]
-        score = similar_docs[0][1]
-        if verbose:
-            self._log_search(query, similar_doc, score)
-
-        if score < self.threshold:
-            return "Tell user that you can not help with that problem"
-        else:
-            return similar_doc.metadata['answer']
+    async def amanual_search(self, query: str, k_nearest=1) -> List[ManualDocument]:
+        similar_docs = await self.db.asimilarity_search(query, k=k_nearest)
+        similar_docs = [ManualDocument(doc.page_content, doc.metadata['answer']) for doc in similar_docs]
+        return similar_docs
 
     def _log_search(self, query, similar_doc, score=None):
         if score:
             logger.debug(f"Score: {score}")
         logger.debug(f"Real Example: {wrap(str(query))}")
-        logger.debug(f"Found Example: {similar_doc.page_content}")
-
+        logger.debug(f"Found Examples: {similar_doc.page_content}")
 
     @staticmethod
     def _vectorize_docs(df: pd.DataFrame, embeddings):
