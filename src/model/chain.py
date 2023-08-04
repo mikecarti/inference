@@ -19,9 +19,10 @@ class Chain:
         self.vector_db: VectorDataBase = db
         self.tool_executor = ToolExecutor()
         self.parser = ManualParser()
+        self.k_closest_results = 40
 
     async def apredict(self, memory, query):
-        manual_part = await self.amanual_search(memory, query)
+        manual_part = await self.amanual_search(query, k=self.k_closest_results)
         functions, manual_text = await self.parse_manual(manual_part)
         result_of_execution = await self.execute_functions(functions)
         manual_text = fill_info_from_function(manual_text, result_of_execution)
@@ -42,12 +43,9 @@ class Chain:
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
-    async def amanual_search(self, memory, query):
-        user_history = await acompose_user_history(memory=memory, query=query)
-
-        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {user_history}")
-        # manual_part = await self.vector_db.amanual_search(user_history)
-        manual_part = await self.vector_db.amanual_search_with_weights(user_history)
+    async def amanual_search(self, query, k):
+        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
+        manual_part = await self.vector_db.amanual_search([query], k_nearest=k)
         return manual_part
 
     @staticmethod
@@ -62,7 +60,7 @@ class Chain:
         )
 
         chain = LLMChain(
-            llm=ChatOpenAI(temperature=0, max_tokens=1500),
+            llm=ChatOpenAI(temperature=0, max_tokens=1500, model='gpt-3.5-turbo-16k'),
             memory=ConversationBufferWindowMemory(memory_key="chat_history", input_key="question"),
             prompt=prompt,
             verbose=True,

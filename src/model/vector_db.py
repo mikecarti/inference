@@ -1,14 +1,11 @@
-import codecs
 from typing import List
 
-import chardet as chardet
 import numpy as np
 from loguru import logger
-from langchain.document_loaders import DataFrameLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.document_loaders import TextLoader
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
-import pandas as pd
 
 from src.model.exceptions import InvalidAnswerException
 from src.model.utils import wrap
@@ -18,7 +15,7 @@ from shutil import rmtree
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
-        self.data_path = "data/data.csv"
+        self.data_path = "data/perekrestok.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
@@ -40,43 +37,48 @@ class VectorDataBase:
         if verbose:
             self._log_search(messages[-1], similar_doc)
 
-        return similar_doc.metadata['answer']
+        return similar_doc.page_content
 
-    async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> (str, str):
+    async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> str:
         query = ' '.join(messages)
 
         similar_docs = await self.db.asimilarity_search_with_relevance_scores(query, k=k_nearest)
-        similar_doc = similar_docs[0][0]
-        score = similar_docs[0][1]
-        if verbose:
-            self._log_search(messages[-1], similar_doc, score)
+        docs = [doc[0].page_content for doc in similar_docs]
+        scores = [doc[1] for doc in similar_docs]
 
-        if score < self.threshold:
+        best_doc = docs[0]
+        best_doc_score = scores[0]
+        aggregated_docs = "\n\n".join(docs)
+
+        if verbose:
+            self._log_search(messages[-1], best_doc, best_doc_score)
+        if best_doc_score < self.threshold:
             return "Tell user that you can not help with that problem"
         else:
-            return similar_doc.metadata['answer']
+            return aggregated_docs
 
-    def _log_search(self, query, similar_doc, score=None):
+    @staticmethod
+    def _log_search(query, similar_doc, score=None):
         if score:
             logger.debug(f"Score: {score}")
         logger.debug(f"Real Question: {wrap(str(query))}")
-        logger.debug(f"Found Question: {similar_doc.page_content}")
+        logger.debug(f"Found Question: {similar_doc}")
 
-
-    @staticmethod
-    def _vectorize_docs(df: pd.DataFrame, embeddings):
+    def _vectorize_docs(self, embeddings):
         """
-        df - DataFrame that has 'question' column
         embeddings - usually OpenAIEmbeddings
         =========
         return - FAISS db
         """
-        # грузим фрейм в лоадер, выделив колонку для векторизации (здесь может быть место для дискуссий)
-        loader = DataFrameLoader(df, page_content_column='question')
+        # грузим файл в лоадер
+        loader = TextLoader(self.data_path)
         documents = loader.load()
 
-        # создаем сплиттер документов, чтобы уложиться в лимит по токенам, в нашем случае это не очень полезный шаг
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        # создаем сплиттер документов, чтобы уложиться в лимит по токенам
+        text_splitter = CharacterTextSplitter(separator="\n\n",
+                                              chunk_size=0,
+                                              chunk_overlap=0,
+                                              length_function=len,)
         texts = text_splitter.split_documents(documents)
 
         # создаем хранилище
@@ -97,38 +99,17 @@ class VectorDataBase:
 
     def _create_vector_db(self):
         logger.info("Creating vector database...")
-        df = self._read_data_for_db()
-        vector_db = self._vectorize_docs(df, self.embeddings)
+        vector_db = self._vectorize_docs(self.embeddings)
         logger.info("Created vector database")
         return vector_db
 
-    def _update_vector_db(self):
-        logger.info("Updating vector database...")
-        old_db = FAISS.load_local(self.db_path, self.embeddings)
-        new_data = self._read_data_for_db()
-        new_db = self._vectorize_docs(new_data, embeddings=self.embeddings)
-        old_db.merge_from(new_db)
-        logger.info("Updated vector database")
-        return old_db
-
-    def _read_data_for_db(self):
-        encoding = "utf-8"
-        # self._set_encoding_of_data_file(encoding)
-
-        df = pd.read_csv(self.data_path, sep=';', encoding=encoding)
-        df.columns = ['id', 'question', 'answer']
-        return df
-
     def _specify_db(self):
-        logger.info("\n(1)Load vector db\n(2)Create one?\n(3)Update with new data\n\t [1/2/3]")
+        logger.info("\n(1)Load vector db\n(2)Create one?\n\t [1/2]")
         ans = input()
         if ans == "1":
             vector_db = self._load_vector_db()
         elif ans == "2":
             vector_db = self._create_vector_db()
-            self._save_db_locally(vector_db)
-        elif ans == "3":
-            vector_db = self._update_vector_db()
             self._save_db_locally(vector_db)
         else:
             raise InvalidAnswerException("Invalid answer")
