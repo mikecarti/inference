@@ -1,15 +1,17 @@
+from typing import List
+
 from langchain.chat_models import ChatOpenAI
 from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
-from langchain.schema import SystemMessage
+from langchain.schema import SystemMessage, BaseMemory
 from loguru import logger
 
 from src.model.prompt_engineer import fill_info_from_function, acompose_user_history
 from src.model.prompts import PROMPT_TEMPLATE
 from src.model.tool_executor import ToolExecutor
-from src.model.vector_db import VectorDataBase
+from src.model.vector_db import VectorDataBase, ManualDocument
 from src.model.manual_parser import ManualParser
 from src.model.relevance import RelevanceModel
 
@@ -25,7 +27,7 @@ class Chain:
     async def apredict(self, memory, query):
         user_history = await acompose_user_history(memory=memory, query=query)
         manual_parts = await self.amanual_search(user_history, retrieve_top_k=5)
-        best_manual = await self.aselect_best_manual(question=query, manuals=manual_parts, conversation_history=memory)
+        best_manual = await self.aselect_best_manual(question=query, manuals=manual_parts, conversation_memory=memory)
         functions, manual_text = await self.parse_manual(best_manual)
         result_of_execution = await self.execute_functions(functions)
         manual_text = fill_info_from_function(manual_text, result_of_execution)
@@ -53,8 +55,9 @@ class Chain:
         manual_parts = await self.vector_db.amanual_search(text, k_nearest=retrieve_top_k)
         return manual_parts
 
-    def aselect_best_manual(self, question, manuals, conversation_history):
-        pass
+    async def aselect_best_manual(self, question: str, manuals: List[ManualDocument], conversation_memory: BaseMemory):
+        # await self.relevance_model.run()
+        return manuals[0].value
 
     @staticmethod
     def get_most_similar_result(query, db):
