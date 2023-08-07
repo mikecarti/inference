@@ -42,7 +42,8 @@ async def send_welcome(message: types.Message) -> None:
     """
     This handler will be called when user sends `/start` or `/help` command
     """
-    await message.reply("Добрый день!\nЯ ИИ сотрудник поддержки, как могу помочь вам сегодня?")
+    await message.reply("Добрый день!\nЯ сотрудник поддержки, наделенный "
+                        "искуственным интеллектом, как могу помочь вам сегодня?")
 
 
 @dp.message_handler(commands=['clear'])
