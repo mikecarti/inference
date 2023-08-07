@@ -15,7 +15,7 @@ from src.view.view import View
 from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
-API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc' #t.me/neurosquare_test_bot
+API_TOKEN = '6409032725:AAEDJyfDq3CbWCaGsvW62sYcmSfa3CNzXSo'  # t.me/pyaterochka_helpdesk_bot
 
 os.environ['OPENAI_API_KEY'] = "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"
 
@@ -42,7 +42,7 @@ async def send_welcome(message: types.Message) -> None:
     """
     This handler will be called when user sends `/start` or `/help` command
     """
-    await message.reply("Добрый день!\nЯ ИИ сотрудник поддержки, как могу помочь вам сегодня?")
+    await message.reply("Добрый день!\nЯ сотрудник поддержки, наделенный искуственным интеллектом, как могу помочь вам сегодня?")
 
 
 @dp.message_handler(commands=['clear'])
