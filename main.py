@@ -15,8 +15,7 @@ from src.view.view import View
 from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
-NOT_USING_THIS_API_TOKEN = '6309821654:AAG2P_3WmwQfoG7hOrhLZDv665nN1IeU4jQ' # for prod
-API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc' # for testing
+API_TOKEN = '6495178686:AAEyEirpdPaAE93IA82Mcf33iFl4LMn2FkQ'
 
 os.environ['OPENAI_API_KEY'] = "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"
 
