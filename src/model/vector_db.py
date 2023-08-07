@@ -20,6 +20,7 @@ class VectorDataBase:
 
         self.embeddings = self._init_embeddings(embeddings)
         self.db = self._specify_db()
+        self._log_number_of_db_entries()
 
     async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
         messages_embeddings = [self.embeddings.embed_query(msg) for msg in messages]
@@ -121,3 +122,7 @@ class VectorDataBase:
             return OpenAIEmbeddings()
         else:
             return embeddings
+
+    def _log_number_of_db_entries(self):
+        number_of_entries = len(self.db.index_to_docstore_id)
+        logger.debug(f"Number of entries in the VectorDB: {number_of_entries}")
