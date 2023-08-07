@@ -1,1 +1,1 @@
-# LINK: https://t.me/perekrestok_helpdesk_bot
+# LINK: https://t.me/neurosquare_test_bot. 
