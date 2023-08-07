@@ -15,7 +15,7 @@ from shutil import rmtree
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
-        self.data_path = "data/perekrestok.txt"
+        self.data_path = "data/5post.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
@@ -71,14 +71,15 @@ class VectorDataBase:
         return - FAISS db
         """
         # грузим файл в лоадер
-        loader = TextLoader(self.data_path)
+        loader = TextLoader(self.data_path, encoding="utf-8")
         documents = loader.load()
 
         # создаем сплиттер документов, чтобы уложиться в лимит по токенам
         text_splitter = CharacterTextSplitter(separator="\n\n",
                                               chunk_size=0,
                                               chunk_overlap=0,
-                                              length_function=len,)
+                                              length_function=len
+                                              )
         texts = text_splitter.split_documents(documents)
 
         # создаем хранилище

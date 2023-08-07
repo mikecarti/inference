@@ -15,7 +15,7 @@ from src.view.view import View
 from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
-API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc' #t.me/neurosquare_test_bot
+API_TOKEN = '6028492385:AAEdwgBJjsC70F9WCiYN34hiBlgjq4bo4UE' #t.me/neurosquare_test_bot
 
 os.environ['OPENAI_API_KEY'] = "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"
 
