@@ -22,10 +22,7 @@ class Chain:
         self.k_closest_results = 40
 
     async def apredict(self, memory, query):
-        manual_part = await self.amanual_search(query, k=self.k_closest_results)
-        functions, manual_text = await self.parse_manual(manual_part)
-        result_of_execution = await self.execute_functions(functions)
-        manual_text = fill_info_from_function(manual_text, result_of_execution)
+        manual_text = await self.amanual_search(query, k=self.k_closest_results)
         response = await self.arun_with_memory(manual_text, memory, query)
         logger.debug(f"Answer: ", response)
         return response

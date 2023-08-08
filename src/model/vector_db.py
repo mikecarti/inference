@@ -15,7 +15,7 @@ from shutil import rmtree
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
-        self.data_path = "data/perekrestok.txt"
+        self.data_path = "data/chizhik.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
