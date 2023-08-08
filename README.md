@@ -1,1 +1,1 @@
-# LINK: https://t.me/fivepost_helpdesk_bot
+# LINK: https://t.me/russian_post_helpdesk_bot

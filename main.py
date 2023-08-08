@@ -15,7 +15,7 @@ from src.view.view import View
 from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
-API_TOKEN = '6492674159:AAHW0UYPS3aY1ALeldlg6fc_nex4OwjVukk' #t.me/fivepost_helpdesk_bot
+API_TOKEN = '6550389855:AAFN8dF_5kJ8t7R1WoprNeyWv3tgVmvJ2zs' #t.me/russian_post_helpdesk_bot
 
 os.environ['OPENAI_API_KEY'] = "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"
 

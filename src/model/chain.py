@@ -19,7 +19,7 @@ class Chain:
         self.vector_db: VectorDataBase = db
         self.tool_executor = ToolExecutor()
         self.parser = ManualParser()
-        self.k_closest_results = 40
+        self.k_closest_results = 15
 
     async def apredict(self, memory, query):
         manual_part = await self.amanual_search(query, k=self.k_closest_results)
