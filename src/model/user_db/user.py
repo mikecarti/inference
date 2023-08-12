@@ -3,6 +3,8 @@ import copy
 import datetime
 import threading
 from dataclasses import dataclass
+from typing import List
+from time import sleep
 
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.schema import BaseMemory
@@ -46,7 +48,7 @@ class User:
             return None
         if self._user_sent_message_recently():
             return None
-        message = self._collect_message_from_recent_messages()
+        message = await self._collect_message_from_recent_messages()
         return message
 
     def reset_memory(self):
@@ -62,33 +64,33 @@ class User:
         self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self.reset_memory)
         self.problem_solved_countdown.start()
 
-    def _collect_message_from_recent_messages(self) -> types.Message:
-        message_queue = self.message_queue._queue
-        last_message = message_queue[-1]
-        prev_msg = message_queue[0]  # trick
-        # collect messages until long break or until no more messages left
-        messages = []
-        index = 0
-        prev_queue_size = self.message_queue.qsize()
-
-        while index < self.message_queue.qsize():
-            msg =  self.message_queue._queue[index]
-
-            print(f"Previous msg:{prev_msg.text} \nCurrent msg: {msg.text} \n Difference in time: {(msg.date - prev_msg.date).total_seconds()}")
-            if self._sufficient_time_difference(prev_msg.date, msg.date):
-                break
-            prev_msg = msg
-            messages.append(msg.text)
-
-            if self.message_queue.qsize() != prev_queue_size:
-                # restart
-                index = 0
-                messages = []
-        for _ in range(len(message_queue)):
+    async def _collect_message_from_recent_messages(self) -> types.Message:
+        prev_q_size = -1
+        # while messages keep coming, collect messages
+        while self.message_queue.qsize() != prev_q_size:
+            prev_q_size = self.message_queue.qsize()
+            last_message, message_queue, messages = self._collect_time_close_messages()
+            time_to_wait = (datetime.datetime.now() - last_message.date).total_seconds()
+            await asyncio.sleep(time_to_wait)
+        # extract messages from queue
+        for _ in range(self.message_queue.qsize()):
             self.message_queue.get_nowait()
         # connect messages
         last_message.text = " ".join(messages)
         return last_message
+
+    def _collect_time_close_messages(self) -> (AbstractMessage, asyncio.Queue, List[AbstractMessage]):
+        message_queue = self.message_queue._queue
+        last_message = message_queue[-1]
+        prev_msg = message_queue[0]  # trick
+        messages = []
+        # collect messages until long break or until no more messages left
+        for msg in message_queue:
+            if self._sufficient_time_difference(prev_msg.date, msg.date):
+                break
+            prev_msg = msg
+            messages.append(msg.text)
+        return last_message, message_queue, messages
 
     def _user_sent_message_recently(self):
         if self.message_queue.empty():
