@@ -4,8 +4,6 @@ import datetime
 import threading
 from dataclasses import dataclass
 from typing import List
-from time import sleep
-
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.schema import BaseMemory
 from aiogram import types
