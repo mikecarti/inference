@@ -70,7 +70,12 @@ class User:
         while self.message_queue.qsize() != prev_q_size:
             prev_q_size = self.message_queue.qsize()
             last_message, message_queue, messages = self._collect_time_close_messages()
-            time_to_wait = (datetime.datetime.now() - last_message.date).total_seconds()
+            time_elapsed = (datetime.datetime.now() - last_message.date).total_seconds()
+            time_to_wait = self._spam_msg_wait_time_seconds - time_elapsed
+            # print(f"""time_to_wait: {time_to_wait},
+            #last_message: {last_message},
+            #last_message.date: {last_message.date},
+            #now: {datetime.datetime.now()}""")
             await asyncio.sleep(time_to_wait)
         # extract messages from queue
         for _ in range(self.message_queue.qsize()):

@@ -39,12 +39,12 @@ class Chain:
 
     async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
         await self._set_memory(memory)
-        logger.debug(f"Manual after formatting: {manual_part}")
+        # logger.debug(f"Manual after formatting: {manual_part}")
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
     async def amanual_search(self, query, k):
-        # logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
+        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
         manual_part = await self.vector_db.amanual_search([query], k_nearest=k)
         return manual_part
 
