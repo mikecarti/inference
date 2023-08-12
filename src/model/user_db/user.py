@@ -19,12 +19,13 @@ class AbstractMessage:
 @dataclass()
 class User:
     memory: ConversationBufferWindowMemory
-    id: int | str
+    id_: int | str
 
-    def __init__(self, user_id, memory, memory_life_time_seconds, spam_msg_wait_time_seconds, name="TestName"):
+    def __init__(self, user_id: id, memory: BaseMemory, memory_life_time_seconds: int, spam_msg_wait_time_seconds: int,
+                 name: str = "TestName"):
         self._empty_memory = copy.deepcopy(memory)
         self.memory = memory
-        self.id = user_id
+        self.id_ = user_id
         self.name = name
         self.memory_life_time_seconds = memory_life_time_seconds
         self._spam_msg_wait_time_seconds = spam_msg_wait_time_seconds
@@ -49,15 +50,15 @@ class User:
         message = await self._collect_message_from_recent_messages()
         return message
 
-    def reset_memory(self):
+    def reset_memory(self) -> None:
         if self.log_resets:
-            logger.debug(f"Memory of user {self.id} was reset")
+            logger.debug(f"Memory of user {self.id_} was reset")
         self.memory = copy.deepcopy(self._empty_memory)
 
-    def task_done(self):
+    def task_done(self) -> None:
         self.message_queue.task_done()
 
-    def _reset_countdown(self):
+    def _reset_countdown(self) -> None:
         self.problem_solved_countdown.cancel()
         self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self.reset_memory)
         self.problem_solved_countdown.start()
@@ -65,15 +66,12 @@ class User:
     async def _collect_message_from_recent_messages(self) -> types.Message:
         prev_q_size = -1
         # while messages keep coming, collect messages
+        last_message, messages = None, []
         while self.message_queue.qsize() != prev_q_size:
             prev_q_size = self.message_queue.qsize()
             last_message, message_queue, messages = self._collect_time_close_messages()
             time_elapsed = (datetime.datetime.now() - last_message.date).total_seconds()
             time_to_wait = self._spam_msg_wait_time_seconds - time_elapsed
-            # print(f"""time_to_wait: {time_to_wait},
-            #last_message: {last_message},
-            #last_message.date: {last_message.date},
-            #now: {datetime.datetime.now()}""")
             await asyncio.sleep(time_to_wait)
         # extract messages from queue
         for _ in range(self.message_queue.qsize()):
@@ -95,7 +93,7 @@ class User:
             messages.append(msg.text)
         return last_message, message_queue, messages
 
-    def _user_sent_message_recently(self):
+    def _user_sent_message_recently(self) -> bool:
         if self.message_queue.empty():
             return False
         last_message: AbstractMessage = self.message_queue._queue[0]
@@ -103,7 +101,7 @@ class User:
         last_message_dt = last_message.date
         return not self._sufficient_time_difference(last_message_dt, now)
 
-    def _sufficient_time_difference(self, dt1, dt2):
+    def _sufficient_time_difference(self, dt1: datetime.datetime, dt2: datetime.datetime) -> bool:
         time_difference = dt2 - dt1
         enough_time_passed = abs(time_difference.total_seconds()) > self._spam_msg_wait_time_seconds
         return enough_time_passed

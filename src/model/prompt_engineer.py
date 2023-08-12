@@ -1,6 +1,5 @@
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.schema import HumanMessage
-from typing import Union
 
 
 async def acompose_user_history(memory: ConversationBufferWindowMemory, query: str) -> list:

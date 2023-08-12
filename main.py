@@ -3,19 +3,18 @@ import logging
 import os
 from typing import Any
 
-import langchain
-from loguru import logger
 from aiogram import Bot, Dispatcher, executor, types
+from loguru import logger
+
 from src.model.chain import Chain
 from src.model.ocr_checker import ReceiptOCR
-from src.model.vector_db import VectorDataBase
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
+from src.model.vector_db import VectorDataBase
 from src.view.view import View
-from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
-API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc' #t.me/neurosquare_test_bot
+API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc'  # t.me/neurosquare_test_bot
 os.environ['OPENAI_API_KEY'] = "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"
 
 # Configure logging
@@ -41,13 +40,14 @@ async def send_welcome(message: types.Message) -> None:
     """
     This handler will be called when user sends `/start` or `/help` command
     """
-    await message.reply("Добрый день!\nЯ сотрудник поддержки, наделенный искусственным интеллектом, как могу помочь вам сегодня?")
+    await message.reply(
+        "Добрый день!\nЯ сотрудник поддержки, наделенный искусственным интеллектом, как могу помочь вам сегодня?")
 
 
 @dp.message_handler(commands=['clear'])
 async def send_welcome(message: types.Message) -> None:
     user_id = message.from_user.id
-    user_db._get(user_id)._reset_memory()
+    user_db.reset_memory(user_id)
     await message.reply("Память переписки очищена!")
 
 
