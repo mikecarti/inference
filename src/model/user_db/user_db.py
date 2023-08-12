@@ -1,6 +1,6 @@
 from langchain.memory import ConversationBufferWindowMemory
 
-from user import User
+from src.model.user_db.user import User
 from typing import *
 
 from src.model.exceptions import UserExistsException
