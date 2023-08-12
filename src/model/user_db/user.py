@@ -66,18 +66,26 @@ class User:
         message_queue = self.message_queue._queue
         last_message = message_queue[-1]
         prev_msg = message_queue[0]  # trick
-        messages = []
         # collect messages until long break or until no more messages left
-        for msg in message_queue:
-            dt = prev_msg.date - msg.date
-            print(f"Previous msg:{prev_msg.text} \nCurrent msg: {msg.text} \n Difference in time: {dt.total_seconds()}")
+        messages = []
+        index = 0
+        prev_queue_size = self.message_queue.qsize()
+
+        while index < self.message_queue.qsize():
+            msg =  self.message_queue._queue[index]
+
+            print(f"Previous msg:{prev_msg.text} \nCurrent msg: {msg.text} \n Difference in time: {(msg.date - prev_msg.date).total_seconds()}")
             if self._sufficient_time_difference(prev_msg.date, msg.date):
                 break
             prev_msg = msg
             messages.append(msg.text)
+
+            if self.message_queue.qsize() != prev_queue_size:
+                # restart
+                index = 0
+                messages = []
         for _ in range(len(message_queue)):
             self.message_queue.get_nowait()
-
         # connect messages
         last_message.text = " ".join(messages)
         return last_message
