@@ -44,7 +44,7 @@ class Chain:
         return response
 
     async def amanual_search(self, query, k):
-        logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
+        # logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
         manual_part = await self.vector_db.amanual_search([query], k_nearest=k)
         return manual_part
 
