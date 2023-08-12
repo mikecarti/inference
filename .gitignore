@@ -1,8 +1,8 @@
 venv
-src/view/__pycache__
-src/model/__pycache__
-src/model/user_db/__pycache__
-.idea
-src/controller/__pycache__
+src/view/__pycache__/
+src/model/__pycache__/
+src/model/user_db/__pycache__/
+.idea/
+src/controller/__pycache__/
 logs.log
 data/old_data.csv

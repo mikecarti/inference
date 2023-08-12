@@ -1,15 +1,16 @@
 from langchain.memory import ConversationBufferWindowMemory
 
-from .user import User
+from user import User
 from typing import *
 
-from ..exceptions import UserExistsException
+from src.model.exceptions import UserExistsException
 
 
 class UserDB:
 
     def __init__(self):
         self.db = {}
+        self.spam_msg_wait_time_seconds = 5
         self.store_k_interactions = 5
         self.memory_life_time_seconds = 60 * 3
 
@@ -32,6 +33,9 @@ class UserDB:
     def get_user_ids(self) -> List[id]:
         return list(self.db.keys())
 
+    def reset_memory(self, user_id):
+        self._get(user_id).reset_memory()
+
     def get_memory(self, user_id):
         if self._user_exists(user_id):
             user = self._get(user_id)
@@ -47,7 +51,10 @@ class UserDB:
             raise UserExistsException(f"User {user_id} exists")
 
         memory = self._init_conversation_memory()
-        user = User(user_id=user_id, memory_life_time_seconds=self.memory_life_time_seconds, memory=memory)
+        user = User(user_id=user_id,
+                    memory_life_time_seconds=self.memory_life_time_seconds,
+                    spam_msg_wait_time_seconds=self.spam_msg_wait_time_seconds,
+                    memory=memory)
         self.db[user_id] = user
         return user
 

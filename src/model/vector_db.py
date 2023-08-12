@@ -15,7 +15,7 @@ from shutil import rmtree
 class VectorDataBase:
     def __init__(self, embeddings=None):
         self.threshold = 0.6
-        self.data_path = "data/perekrestok.txt"
+        self.data_path = "data/your_data_path.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
@@ -79,7 +79,7 @@ class VectorDataBase:
         text_splitter = CharacterTextSplitter(separator="\n\n",
                                               chunk_size=0,
                                               chunk_overlap=0,
-                                              length_function=len,)
+                                              length_function=len, )
         texts = text_splitter.split_documents(documents)
 
         # создаем хранилище

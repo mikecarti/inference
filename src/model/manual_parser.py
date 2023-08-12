@@ -53,7 +53,8 @@ class ManualParser:
 
         return manual_text, functions
 
-    def _remove_arrows(self, s: str):
+    @staticmethod
+    def _remove_arrows(s: str):
         return s.replace("<", "").replace(">", "")
 
     def _manual_has_functions(self, manual_text: str):

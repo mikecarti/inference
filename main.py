@@ -3,16 +3,15 @@ import logging
 import os
 from typing import Any
 
-import langchain
-from loguru import logger
 from aiogram import Bot, Dispatcher, executor, types
+from loguru import logger
+
 from src.model.chain import Chain
 from src.model.ocr_checker import ReceiptOCR
-from src.model.vector_db import VectorDataBase
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
+from src.model.vector_db import VectorDataBase
 from src.view.view import View
-from src.model.exceptions import InvalidMessageTypeException
 
 # TOKENS
 API_TOKEN = '6495178686:AAEyEirpdPaAE93IA82Mcf33iFl4LMn2FkQ'  # t.me/perekrestok_helpdesk_bot
@@ -49,7 +48,7 @@ async def send_welcome(message: types.Message) -> None:
 @dp.message_handler(commands=['clear'])
 async def send_welcome(message: types.Message) -> None:
     user_id = message.from_user.id
-    user_db._get(user_id)._reset_memory()
+    user_db.reset_memory(user_id)
     await message.reply("Память переписки очищена!")
 
 
