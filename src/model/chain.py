@@ -1,16 +1,14 @@
-from langchain.chat_models import ChatOpenAI
 from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
-from langchain.schema import SystemMessage
 from loguru import logger
 
-from src.model.prompt_engineer import fill_info_from_function, acompose_user_history
+from src.model.manual_parser import ManualParser
+from src.model.prompt_engineer import fill_info_from_function
 from src.model.prompts import PROMPT_TEMPLATE
 from src.model.tool_executor import ToolExecutor
 from src.model.vector_db import VectorDataBase
-from src.model.manual_parser import ManualParser
 
 
 class Chain:

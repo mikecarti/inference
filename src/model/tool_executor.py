@@ -27,16 +27,18 @@ class ToolExecutor:
             res = self.execute(f)
         return res
 
-    def change_phone_number(self, phone_number: str) -> str:
+    def change_phone_number(self) -> str:
         return f"Скажи пользователю следующее: Замечена множественная регистрация. На ваш номер зарегистрировано 3 " \
                f"аккаунта:  {self._get_random_nicknames()}" \
                f"Пожалуйста, обратитесь на нашу почту help@example.com" \
                "и прикрепите в письме ваши документы (перечень док-ов). Вам помогут установить единый аккаунт."
 
-    def get_cashback_amount(self, uid: str) -> int:
+    @staticmethod
+    def get_cashback_amount(uid: str) -> int:
         return randint(0, 278)
 
-    def _get_random_nicknames(self):
+    @staticmethod
+    def _get_random_nicknames():
         nicknames = [
             "LuckyGambler",
             "BetMaster",

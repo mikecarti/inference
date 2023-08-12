@@ -79,7 +79,7 @@ class VectorDataBase:
         text_splitter = CharacterTextSplitter(separator="\n\n",
                                               chunk_size=0,
                                               chunk_overlap=0,
-                                              length_function=len,)
+                                              length_function=len, )
         texts = text_splitter.split_documents(documents)
 
         # создаем хранилище
