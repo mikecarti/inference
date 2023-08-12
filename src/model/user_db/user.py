@@ -38,7 +38,6 @@ class User:
 
     async def add_to_queue(self, message: AbstractMessage) -> None:
         # this method may be blocking if queue has element number limit
-        print("Message added to q: ", message.text)
         await self.message_queue.put(message)
 
     async def get_from_queue(self) -> types.Message | None:
