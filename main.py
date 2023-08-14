@@ -1,15 +1,14 @@
-import asyncio
 import logging
 import os
-from typing import Any
-
 from loguru import logger
+from fastapi import FastAPI, HTTPException
 
 from src.model.chain import Chain
 from src.model.ocr_checker import ReceiptOCR
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
 from src.model.vector_db import VectorDataBase
+from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser
 from src.view.view import View
 
 # TOKENS
@@ -20,6 +19,7 @@ logging.basicConfig(level=logging.INFO)
 init_logging()
 
 # Initialize bot and dispatcher
+app = FastAPI()
 
 # Initialize DBs and LLM
 user_db = UserDB()
@@ -31,50 +31,34 @@ receipt_checker = ReceiptOCR()
 view = View()
 
 
-# @app.post("/start_help")
-async def send_welcome(message: types.Message) -> None:
-    """
-    This handler will be called when user sends `/start` or `/help` command
-    """
-    await message.reply(
-        "Добрый день!\nЯ сотрудник поддержки, наделенный искусственным интеллектом, как могу помочь вам сегодня?")
-
-
-# @app.post("/clear")
-async def clear_memory(message: types.Message) -> None:
-    user_id = message.from_user.id
-    user_db.reset_memory(user_id)
-    await message.reply("Память переписки очищена!")
-
-
 @app.post("/add_message")
-async def add_message_to_queue(message: types.Message) -> None:
+async def add_message_to_queue(payload: MessagePayload) -> None:
+    message = RestApiMessage(
+        text=payload.text,
+        date=payload.date,
+        from_user=FrontendUser(
+            id=payload.from_user.id,
+            username=payload.from_user.username
+        )
+    )
+
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
     await user_db.add_to_queue(user_id, message)
 
 
-# @app.post("/process_document")
-async def process_document(message: types.Message) -> None:
-    """Processes files sent by user (but not images)"""
-    logger.debug(f"File from user {message.from_user.username} is processing")
-    doc = message.document
-    answer = await receipt_checker.acheck_transactions_status(doc)
-    await send_message(message, answer)
+@app.post("/answer_message")
+async def answer_message(data: dict):
+    message = await user_db.get_from_queue(data["user_id"])
+    if not message:
+        return {}
+
+    answer = await generate_answer(message)
+    logger.debug(f"Answer: {wrap(answer)}")
+    return {"text": answer}
 
 
-async def process_queues() -> None:
-    logger.info("Message processing task started")
-    sleep_for = 0.3
-    while True:
-        await asyncio.sleep(sleep_for)
-        for user_id in user_db.get_user_ids():
-            message = await user_db.get_from_queue(user_id)
-            if message:
-                await answer_message(message)
-
-
-async def answer_message(message: types.Message) -> None:
+async def generate_answer(message: AbstractMessage) -> str:
     user_id = message.from_user.id
     user_msg = message.text
 
@@ -82,23 +66,10 @@ async def answer_message(message: types.Message) -> None:
     answer = await chain.apredict(memory, user_msg)
 
     answer = view.process_answer(answer)
-    await send_message(message, answer)
-
-
-async def send_message(user_message: types.Message, bot_answer: str) -> None:
-    logger.debug(f"Answer: {wrap(bot_answer)}")
-    await user_message.reply(bot_answer)
-
-
-async def on_startup_launch(args: Any) -> None:
-    asyncio.create_task(process_queues())
-
-
-def main() -> None:
-    os.environ["PYTHONASYNCIODEBUG"] = "1"
-    # langchain.debug = True
-    executor.start_polling(dp, skip_updates=False, on_startup=on_startup_launch)
+    return answer
 
 
 if __name__ == '__main__':
-    main()
+    import uvicorn
+    # os.environ["PYTHONASYNCIODEBUG"] = "1"
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -9,11 +9,7 @@ from langchain.schema import BaseMemory
 from aiogram import types
 from loguru import logger
 
-
-@dataclass()
-class AbstractMessage:
-    text: str
-    date: datetime.datetime
+from src.model.message import AbstractMessage
 
 
 @dataclass()
