@@ -3,7 +3,6 @@ import logging
 import os
 from typing import Any
 
-from aiogram import Bot, Dispatcher, executor, types
 from loguru import logger
 
 from src.model.chain import Chain
@@ -14,7 +13,6 @@ from src.model.vector_db import VectorDataBase
 from src.view.view import View
 
 # TOKENS
-API_TOKEN = '6482619485:AAEdhmfuTIys7Ukxvo12gtVyoDfAKmjveQc'  # t.me/neurosquare_test_bot
 os.environ['OPENAI_API_KEY'] = "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"
 
 # Configure logging
@@ -22,8 +20,6 @@ logging.basicConfig(level=logging.INFO)
 init_logging()
 
 # Initialize bot and dispatcher
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
 
 # Initialize DBs and LLM
 user_db = UserDB()
@@ -35,7 +31,7 @@ receipt_checker = ReceiptOCR()
 view = View()
 
 
-@dp.message_handler(commands=['start', 'help'])
+# @app.post("/start_help")
 async def send_welcome(message: types.Message) -> None:
     """
     This handler will be called when user sends `/start` or `/help` command
@@ -44,18 +40,27 @@ async def send_welcome(message: types.Message) -> None:
         "Добрый день!\nЯ сотрудник поддержки, наделенный искусственным интеллектом, как могу помочь вам сегодня?")
 
 
-@dp.message_handler(commands=['clear'])
-async def send_welcome(message: types.Message) -> None:
+# @app.post("/clear")
+async def clear_memory(message: types.Message) -> None:
     user_id = message.from_user.id
     user_db.reset_memory(user_id)
     await message.reply("Память переписки очищена!")
 
 
-@dp.message_handler(content_types=['text'])
+@app.post("/add_message")
 async def add_message_to_queue(message: types.Message) -> None:
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
     await user_db.add_to_queue(user_id, message)
+
+
+# @app.post("/process_document")
+async def process_document(message: types.Message) -> None:
+    """Processes files sent by user (but not images)"""
+    logger.debug(f"File from user {message.from_user.username} is processing")
+    doc = message.document
+    answer = await receipt_checker.acheck_transactions_status(doc)
+    await send_message(message, answer)
 
 
 async def process_queues() -> None:
@@ -67,15 +72,6 @@ async def process_queues() -> None:
             message = await user_db.get_from_queue(user_id)
             if message:
                 await answer_message(message)
-
-
-@dp.message_handler(content_types=['document'])
-async def process_document(message: types.Message) -> None:
-    """Processes files sent by user (but not images)"""
-    logger.debug(f"File from user {message.from_user.username} is processing")
-    doc = message.document
-    answer = await receipt_checker.acheck_transactions_status(doc)
-    await send_message(message, answer)
 
 
 async def answer_message(message: types.Message) -> None:
