@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List
 from langchain.memory import ConversationBufferWindowMemory
 from langchain.schema import BaseMemory
-from aiogram import types
+from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
 from loguru import logger
 
 from src.model.message import AbstractMessage
@@ -38,11 +38,15 @@ class User:
         print("Message added to q: ", message.text)
         await self.message_queue.put(message)
 
-    async def get_from_queue(self) -> types.Message | None:
+    async def get_from_queue(self) -> AbstractMessage:
         if self.message_queue.empty():
-            return None
+            sys_msg = f"Queue of user {self.id_, self.name} empty"
+            logger.debug(sys_msg)
+            raise MessageQueueEmptyException(sys_msg)
         if self._user_sent_message_recently():
-            return None
+            sys_msg = f"Spam prevention for user {self.id_, self.name}"
+            logger.debug(sys_msg)
+            raise LimitExceededException(sys_msg)
         message = await self._collect_message_from_recent_messages()
         return message
 
@@ -59,7 +63,7 @@ class User:
         self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self.reset_memory)
         self.problem_solved_countdown.start()
 
-    async def _collect_message_from_recent_messages(self) -> types.Message:
+    async def _collect_message_from_recent_messages(self) -> AbstractMessage:
         prev_q_size = -1
         # while messages keep coming, collect messages
         last_message, messages = None, []

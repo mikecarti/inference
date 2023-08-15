@@ -10,7 +10,7 @@ class UserDB:
 
     def __init__(self):
         self.db = {}
-        self.spam_msg_wait_time_seconds = 5
+        self.spam_msg_wait_time_seconds = 3
         self.store_k_interactions = 5
         self.memory_life_time_seconds = 60 * 3
 
@@ -33,7 +33,7 @@ class UserDB:
     def get_user_ids(self) -> List[id]:
         return list(self.db.keys())
 
-    def reset_memory(self, user_id):
+    def reset_memory(self, user_id) -> None:
         self._get(user_id).reset_memory()
 
     def get_memory(self, user_id):

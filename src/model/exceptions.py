@@ -1,10 +1,24 @@
-class InvalidAnswerException(Exception):
+class CustomException(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidAnswerException(BaseException):
     pass
 
 
-class UserExistsException(Exception):
+class UserExistsException(BaseException):
     pass
 
 
-class InvalidMessageTypeException(Exception):
+class InvalidMessageTypeException(BaseException):
+    pass
+
+
+class MessageQueueEmptyException(BaseException):
+    pass
+
+
+class LimitExceededException(BaseException):
     pass

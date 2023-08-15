@@ -4,6 +4,7 @@ from loguru import logger
 from fastapi import FastAPI, HTTPException
 
 from src.model.chain import Chain
+from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
 from src.model.ocr_checker import ReceiptOCR
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
@@ -48,14 +49,27 @@ async def add_message_to_queue(payload: MessagePayload) -> None:
 
 
 @app.post("/answer_message")
-async def answer_message(data: dict):
-    message = await user_db.get_from_queue(data["user_id"])
-    if not message:
-        return {}
+async def answer_message(data: dict) -> dict:
+    try:
+        message = await user_db.get_from_queue(data["user_id"])
+        if not message:
+            return {}
 
-    answer = await generate_answer(message)
-    logger.debug(f"Answer: {wrap(answer)}")
-    return {"text": answer}
+        answer = await generate_answer(message)
+        logger.debug(f"Answer: {wrap(answer)}")
+        return {"text": answer}
+    except MessageQueueEmptyException:
+        raise HTTPException(status_code=404, detail="Message queue is empty")
+    except LimitExceededException:
+        raise HTTPException(status_code=429, detail="Spam limit exceeded")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/clear_memory/{user_id}")
+async def clear_memory(user_id: int) -> dict:
+    user_db.reset_memory(user_id)
+    return {"text": "Память переписки очищена!"}
 
 
 async def generate_answer(message: AbstractMessage) -> str:
@@ -68,9 +82,11 @@ async def generate_answer(message: AbstractMessage) -> str:
     answer = view.process_answer(answer)
     return answer
 
+
 # alternatively run in console
 # uvicorn main:app --host 0.0.0.0 --port 8000
 if __name__ == '__main__':
     import uvicorn
+
     # os.environ["PYTHONASYNCIODEBUG"] = "1"
     uvicorn.run(app, host="0.0.0.0", port=8000)
