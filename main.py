@@ -45,7 +45,7 @@ async def send_welcome(message: types.Message) -> None:
 
 
 @dp.message_handler(commands=['clear'])
-async def send_welcome(message: types.Message) -> None:
+async def clear_memory(message: types.Message) -> None:
     user_id = message.from_user.id
     user_db.reset_memory(user_id)
     await message.reply("Память переписки очищена!")
