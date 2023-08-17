@@ -22,3 +22,7 @@ class MessageQueueEmptyException(BaseException):
 
 class LimitExceededException(BaseException):
     pass
+
+
+class UnknownIntentException(BaseException):
+    pass
