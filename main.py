@@ -5,11 +5,11 @@ from fastapi import FastAPI, HTTPException
 
 from src.model.chain import Chain
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
-from src.model.ocr_checker import ReceiptOCR
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
 from src.model.vector_db import VectorDataBase
 from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser
+from src.model.nlu_framework import NLUFramework
 from src.view.view import View
 
 # TOKENS
@@ -24,12 +24,12 @@ app = FastAPI()
 
 # Initialize DBs and LLM
 user_db = UserDB()
-vector_db = VectorDataBase()
-chain = Chain(vector_db)
-receipt_checker = ReceiptOCR()
+chain = Chain(db=VectorDataBase())
+nlu_tool = NLUFramework()
 
 # Initialize View
 view = View()
+
 
 
 @app.post("/add_message")
@@ -52,10 +52,9 @@ async def add_message_to_queue(payload: MessagePayload) -> None:
 async def answer_message(data: dict) -> dict:
     try:
         message = await user_db.get_from_queue(data["user_id"])
-        if not message:
-            return {}
-
-        answer = await generate_answer(message)
+        answer = process_intents(message)
+        if not answer:
+            answer = await generate_answer(message)
         logger.debug(f"Answer: {wrap(answer)}")
         return {"text": answer}
     except MessageQueueEmptyException:
@@ -63,6 +62,7 @@ async def answer_message(data: dict) -> dict:
     except LimitExceededException:
         raise HTTPException(status_code=429, detail="Spam limit exceeded")
     except Exception as e:
+        logger.debug(f"Exception: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -74,13 +74,17 @@ async def clear_memory(user_id: int) -> dict:
 
 async def generate_answer(message: AbstractMessage) -> str:
     user_id = message.from_user.id
-    user_msg = message.text
+    user_text = message.text
 
     memory = user_db.get_memory(user_id)
-    answer = await chain.apredict(memory, user_msg)
+    answer = await chain.apredict(memory, user_text)
 
     answer = view.process_answer(answer)
     return answer
+
+
+def process_intents(message: AbstractMessage) -> str:
+    return nlu_tool.run(query=message.text)
 
 
 # alternatively run in console

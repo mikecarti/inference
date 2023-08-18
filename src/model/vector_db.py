@@ -1,3 +1,4 @@
+import threading
 from typing import List
 
 import numpy as np
@@ -13,8 +14,9 @@ from shutil import rmtree
 
 
 class VectorDataBase:
+    THRESHOLD: float = 0.6
+    CONSOLE_WAIT_DEFAULT: int = 3
     def __init__(self, embeddings=None):
-        self.threshold = 0.6
         self.data_path = "data/your_data_path.txt"
         self.db_path = "faiss_index"
 
@@ -53,7 +55,7 @@ class VectorDataBase:
 
         if verbose:
             self._log_search(messages[-1], best_doc, best_doc_score)
-        if best_doc_score < self.threshold:
+        if best_doc_score < self.THRESHOLD:
             return "Tell user that you can not help with that problem"
         else:
             return aggregated_docs
@@ -106,8 +108,8 @@ class VectorDataBase:
 
     def _specify_db(self):
         logger.info("\n(1)Load vector db\n(2)Create one?\n\t [1/2]")
-        ans = input()
-        if ans == "1":
+        ans = self._get_input_with_timeout_for_console()  # Wait for input for 3 seconds
+        if ans is None or ans == "1":
             vector_db = self._load_vector_db()
         elif ans == "2":
             vector_db = self._create_vector_db()
@@ -115,6 +117,23 @@ class VectorDataBase:
         else:
             raise InvalidAnswerException("Invalid answer")
         return vector_db
+
+    def _get_input_with_timeout_for_console(self) -> None | str:
+        input_result = [None]  # A list to store the input result
+
+        def get_input():
+            input_result[0] = input()
+
+        input_thread = threading.Thread(target=get_input)
+        input_thread.start()
+
+        input_thread.join(self.CONSOLE_WAIT_DEFAULT)  # Wait for the thread to finish or timeout
+
+        if input_thread.is_alive():
+            logger.debug("Nothing was chosen, continuing with default behaviour: (1) Load vector db")
+            return None  # If timeout occurs, return None
+        else:
+            return input_result[0]  # Return the input result
 
     @staticmethod
     def _init_embeddings(embeddings) -> OpenAIEmbeddings:
