@@ -5,10 +5,11 @@ from fastapi import FastAPI, HTTPException
 
 from src.model.chain import Chain
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
+from src.model.text_transform import TextTransformer
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
 from src.model.vector_db import VectorDataBase
-from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser
+from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser, MessageLLMPayload
 from src.model.nlu_framework import NLUFramework
 from src.view.view import View
 
@@ -26,10 +27,10 @@ app = FastAPI()
 user_db = UserDB()
 chain = Chain(db=VectorDataBase())
 nlu_tool = NLUFramework()
+transformer = TextTransformer()
 
 # Initialize View
 view = View()
-
 
 
 @app.post("/add_message")
@@ -49,14 +50,9 @@ async def add_message_to_queue(payload: MessagePayload) -> None:
 
 
 @app.post("/answer_message")
-async def answer_message(data: dict) -> dict:
+async def answer_message(payload: MessageLLMPayload) -> dict:
     try:
-        message = await user_db.get_from_queue(data["user_id"])
-        answer = process_intents(message)
-        if not answer:
-            answer = await generate_answer(message)
-        logger.debug(f"Answer: {wrap(answer)}")
-        return {"text": answer}
+        return await prepare_answer(payload)
     except MessageQueueEmptyException:
         raise HTTPException(status_code=404, detail="Message queue is empty")
     except LimitExceededException:
@@ -64,6 +60,22 @@ async def answer_message(data: dict) -> dict:
     except Exception as e:
         logger.debug(f"Exception: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+async def prepare_answer(payload: MessageLLMPayload) -> dict:
+    message = await user_db.get_from_queue(payload.user_id)
+    answer = process_intents(message)
+    if not answer:
+        answer = await generate_answer(message)
+    logger.debug(f"Answer before transforming: {wrap(answer)}")
+
+    answer = transformer.transform_text(
+        answer,
+        anger=payload.anger_level,
+        misspelling=payload.misspelling_level
+    )
+    logger.debug(f"Answer: {wrap(answer)}")
+    return {"text": answer}
 
 
 @app.post("/clear_memory/{user_id}")
