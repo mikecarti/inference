@@ -2,7 +2,9 @@ from datetime import datetime
 from time import sleep
 
 import requests
-
+#
+# ADD MESSAGE TO QUEUE
+#
 URL = "http://0.0.0.0:8000/add_message"
 payload = {
     "text": "сколько стоит доставка",
@@ -22,6 +24,9 @@ else:
 
 sleep(1)
 
+#
+# REQUEST ANSWER TO A MESSAGE
+#
 URL = "http://0.0.0.0:8000/answer_message"
 payload = {
     "user_id": 228,
