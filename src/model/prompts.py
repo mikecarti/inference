@@ -38,6 +38,19 @@ LEVELS = {
         2: "spelled mildly incorrect",
         3: "spelled extremely incorrect"
     },
+    "anxiety_level": {
+        0: "written not nervously",
+        1: "written slightly nervously",
+        2: "written nervously with some unsure question repetitions",
+        3: "written extremely nervous with a lot of unsure question repetitions"
+    },
+    "extensiveness_level": {
+        0: "extremely shorter than in original",
+        1: "shorter than in original",
+        2: "has same length as in original",
+        3: "MUCH more extensive than in original"
+    }
+
 }
 REQUIRED_SLIDERS = list(LEVELS.keys())
 
