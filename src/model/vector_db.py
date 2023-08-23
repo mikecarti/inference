@@ -17,7 +17,7 @@ class VectorDataBase:
     THRESHOLD: float = 0.6
     CONSOLE_WAIT_DEFAULT: int = 3
     def __init__(self, embeddings=None):
-        self.data_path = "data/your_data_path.txt"
+        self.data_path = "data/about_us.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)

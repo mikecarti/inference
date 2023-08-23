@@ -29,17 +29,17 @@ class TextTransformer:
 PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessage(
-            content="Forget all previous instructions. You help change questions according to rules. "
+            content="Forget all previous instructions. You help change text according to rules. "
                     "Dont be afraid to be "
                     "rude or "
                     "grammatically incorrect"
         ),
-        HumanMessagePromptTemplate.from_template("Change this question so it would satisfy all these points \n"
-                                                 " 0) the question is written in russian\n"
-                                                 " 1) the question is {anger_level}\n"
-                                                 " 2) the question is {misspelling_level}\n"
-                                                 " Make sure modified question satisfies every point\n"
-                                                 "Original Question: {question} \nModified Question:"),
+        HumanMessagePromptTemplate.from_template("Change this text so it would satisfy all these points \n"
+                                                 " 0) the text is written in russian\n"
+                                                 " 1) the text is {anger_level}\n"
+                                                 " 2) the text is {misspelling_level}\n"
+                                                 " Make sure modified text satisfies every point\n"
+                                                 "Original text: {question} \nModified text:"),
     ]
 )
 
