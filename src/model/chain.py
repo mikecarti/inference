@@ -4,7 +4,7 @@ from langchain.memory import ConversationBufferMemory, ConversationBufferWindowM
 from langchain.prompts import PromptTemplate
 from loguru import logger
 
-from src.model.prompts import PROMPT_TEMPLATE
+from src.model.prompts import HELPDESK_PROMPT_TEMPLATE
 from src.model.vector_db import VectorDataBase
 
 
@@ -39,7 +39,7 @@ class Chain:
     @staticmethod
     def init_chain():
         prompt = PromptTemplate(
-            template=PROMPT_TEMPLATE, input_variables=['manual_part', 'question', 'chat_history']
+            template=HELPDESK_PROMPT_TEMPLATE, input_variables=['manual_part', 'question', 'chat_history']
         )
 
         chain = LLMChain(

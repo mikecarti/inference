@@ -71,8 +71,7 @@ async def prepare_answer(payload: MessageLLMPayload) -> dict:
 
     answer = transformer.transform_text(
         answer,
-        anger=payload.anger_level,
-        misspelling=payload.misspelling_level
+        sliders=payload.sliders
     )
     logger.debug(f"Answer: {wrap(answer)}")
     return {"text": answer}

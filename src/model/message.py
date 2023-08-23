@@ -1,7 +1,7 @@
 from datetime import datetime
 from dataclasses import dataclass
 from pydantic import BaseModel
-
+from typing import *
 
 @dataclass()
 class FrontendUser:
@@ -30,7 +30,9 @@ class MessagePayload(BaseModel):
 class MessageLLMPayload(BaseModel):
     # id
     user_id: int
-    # anger level [0, 1, 2, 3]
-    anger_level: int
-    # misspelling level [0, 1, 2, 3]
-    misspelling_level: int
+    # all_sliders with int values
+    # {
+    #   "anger_level": 0,
+    #    ...
+    # }
+    sliders: Dict[str, int]

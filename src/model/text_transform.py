@@ -3,43 +3,41 @@ from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from loguru import logger
 
+from src.model.prompts import TRANSFORMER_SYSTEM_PROMPT, TRANSFORMER_QUERY_PROMPT
+
 
 class TextTransformer:
+    REQUIRED_SLIDERS = ["anger_level", "misspelling_level"]
+
     def __init__(self):
         self._llm = ChatOpenAI(model="gpt-3.5-turbo")
 
-    def transform_text(self, text: str, anger: int, misspelling: int) -> str:
-        prompt = self._build_transformation_prompt(question=text, anger=anger, misspelling=misspelling)
+    def transform_text(self, text: str, sliders: dict) -> str:
+        for req_slider in self.REQUIRED_SLIDERS:
+            assert sliders.get(req_slider) is not None
+            assert 0 <= sliders.get(req_slider) <= 3
+
+        prompt = self._build_transformation_prompt(question=text, sliders=sliders)
         return self._llm(prompt).content
 
-    def _build_transformation_prompt(self, question: str, anger: int, misspelling: int) -> list:
-        anger_text, misspelling_text = self._convert_sliders_to_text(anger=anger, misspelling=misspelling)
+    def _build_transformation_prompt(self, question: str, sliders: dict) -> list:
+        anger_text, misspelling_text = self._convert_sliders_to_text(sliders=sliders)
         prompt = PROMPT.format_messages(question=question, anger_level=anger_text, misspelling_level=misspelling_text)
         logger.debug(f"Prompt after formatting: {prompt[1].content}")
         return prompt
 
     @staticmethod
-    def _convert_sliders_to_text(anger: int, misspelling: int) -> tuple[str, str]:
-        anger_text = ANGER_LEVELS.get(anger)
-        misspelling_text = MISSPELLING_LEVELS.get(misspelling)
+    def _convert_sliders_to_text(sliders: dict) -> tuple[str, str]:
+        anger_text = ANGER_LEVELS.get(sliders.get('anger'))
+        misspelling_text = MISSPELLING_LEVELS.get(sliders.get('misspelling'))
 
         return anger_text, misspelling_text
 
 
 PROMPT = ChatPromptTemplate.from_messages(
     [
-        SystemMessage(
-            content="Forget all previous instructions. You help change text according to rules. "
-                    "Dont be afraid to be "
-                    "rude or "
-                    "grammatically incorrect"
-        ),
-        HumanMessagePromptTemplate.from_template("Change this text so it would satisfy all these points \n"
-                                                 " 0) the text is written in russian\n"
-                                                 " 1) the text is {anger_level}\n"
-                                                 " 2) the text is {misspelling_level}\n"
-                                                 " Make sure modified text satisfies every point\n"
-                                                 "Original text: {question} \nModified text:"),
+        SystemMessage(content=TRANSFORMER_SYSTEM_PROMPT),
+        HumanMessagePromptTemplate.from_template(TRANSFORMER_QUERY_PROMPT),
     ]
 )
 
