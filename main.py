@@ -64,7 +64,8 @@ async def answer_message(payload: MessageLLMPayload) -> dict:
 
 async def prepare_answer(payload: MessageLLMPayload) -> dict:
     message = await user_db.get_from_queue(payload.user_id)
-    answer = process_intents(message)
+    # answer = process_intents(message)
+    answer = "Okay"
     if not answer:
         answer = await generate_answer(message)
     logger.debug(f"Answer before transforming: {wrap(answer)}")
