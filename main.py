@@ -20,7 +20,7 @@ os.environ['OPENAI_API_KEY'] = "sk-GAVqeY6lKlAQya709ph1T3BlbkFJqTjm1bLbdr3vp1uLi
 logging.basicConfig(level=logging.INFO)
 init_logging()
 
-# Initialize bot and dispatcher
+# Initialize API
 app = FastAPI()
 
 # Initialize DBs and LLM

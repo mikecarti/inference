@@ -53,7 +53,6 @@ LEVELS = {
 
 }
 REQUIRED_SLIDERS = list(LEVELS.keys())
-
 INSTRUCTIONS = "\n".join([f"{i+1}) the text is {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
 TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
