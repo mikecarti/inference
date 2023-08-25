@@ -1,7 +1,6 @@
 import os
 from enum import Enum
 
-from google.cloud import dialogflow
 from src.model.exceptions import UnknownIntentException
 
 
@@ -11,16 +10,17 @@ class Intents(Enum):
     CASHBACK_BALANCE = "Cashback Balance Intent"
 
 
-
 class NLUFramework:
     credentials_path = 'data/credentials.json'
     project_id = 'helpdeskagent-vlbw'
     language_code = 'ru'
 
     def __init__(self):
-        self.session_client = dialogflow.SessionsClient.from_service_account_json(self.credentials_path)
+        pass
+    # self.session_client = dialogflow.SessionsClient.from_service_account_json(self.credentials_path)
 
     def run(self, query) -> str | None:
+        return None
         intent = self.detect_intent(query)
         result = self.process_intent(intent)
         return result

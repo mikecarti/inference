@@ -21,7 +21,7 @@ class VectorDataBase:
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
-        self.db = self._specify_db()
+        self.db = self._specify_db(load_existing=True)
         self._log_number_of_db_entries()
 
     async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
@@ -106,7 +106,9 @@ class VectorDataBase:
         logger.info("Created vector database")
         return vector_db
 
-    def _specify_db(self):
+    def _specify_db(self, load_existing=False):
+        if load_existing:
+            return self._load_vector_db()
         logger.info("\n(1)Load vector db\n(2)Create one?\n\t [1/2]")
         ans = self._get_input_with_timeout_for_console()  # Wait for input for 3 seconds
         if ans is None or ans == "1":
