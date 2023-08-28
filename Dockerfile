@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Specify the command to run the helpDesk service
-CMD [ "python3.10", "main.py", "&&", "bash", "-c", "sleep 1 && echo 1"]
+CMD [ "python3.10", "main.py"]
