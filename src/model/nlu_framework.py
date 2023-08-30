@@ -1,52 +1,45 @@
-import os
-from enum import Enum
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import AgentType
+from langchain.chat_models import ChatOpenAI
+from loguru import logger
 
-from src.model.exceptions import UnknownIntentException
-
-
-class Intents(Enum):
-    FALLBACK = "Default Fallback Intent"
-    DELIVERY_STATUS = "Delivery Status Intent"
-    CASHBACK_BALANCE = "Cashback Balance Intent"
+from typing import List
 
 
 class NLUFramework:
-    credentials_path = 'data/credentials.json'
-    project_id = 'helpdeskagent-vlbw'
-    language_code = 'ru'
-
     def __init__(self):
-        pass
-    # self.session_client = dialogflow.SessionsClient.from_service_account_json(self.credentials_path)
+        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613")
+        tools = self._construct_tools()
+        self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True, return_intermediate_steps=True)
 
-    def run(self, query) -> str | None:
-        return None
-        intent = self.detect_intent(query)
-        result = self.process_intent(intent)
-        return result
+    def __call__(self, text) -> str | None:
+        agent_response = self.agent(text)
+        output = self._get_one_func_chain_output(agent_response)
+        return output
 
-    def detect_intent(self, text: str) -> dict:
-        session_id = 'unique-session-id'
-        session = self.session_client.session_path(self.project_id, session_id)
-
-        text_input = dialogflow.TextInput({"text": text, "language_code": self.language_code})
-        query_input = dialogflow.QueryInput({"text": text_input})
-
-        response = self.session_client.detect_intent(
-            session=session,
-            query_input=query_input
-        )
-
-        intent_display_name = response.query_result.intent.display_name
-        return intent_display_name
-
-    def process_intent(self, intent: str) -> str | None:
-        intent = intent.strip()
-        if intent == Intents.DELIVERY_STATUS.value:
-            return "Ваш статус посылки - Тест"
-        elif intent == Intents.CASHBACK_BALANCE.value:
-            return "Кэшбек баланс - Тест"
-        elif intent == Intents.FALLBACK.value:
+    @staticmethod
+    def _get_one_func_chain_output(agent_response: dict) -> str | None:
+        intermediate_steps = agent_response.get("intermediate_steps")
+        # print("agent_response: ", agent_response)
+        if not intermediate_steps or len(intermediate_steps) == 0:
+            logger.debug("Intent is not recognized")
             return None
-        else:
-            raise UnknownIntentException(f"Unknown intent: {intent}")
+        function_output = intermediate_steps[0][1]
+        logger.debug(f"Intent is recognized, function output: {function_output}")
+        return function_output
+
+    @staticmethod
+    def _construct_tools() -> List[Tool]:
+        tools = [
+            Tool(
+                name="Cashback-Balance",
+                func=lambda x: "5 рублей",
+                description="useful for when you need to answer questions about cashback balance of a user",
+            ),
+            Tool(
+                name="Delivery-Status",
+                func=lambda x: "Shipment is being delivered. Will come in 10 minutes",
+                description="useful for when you need to answer questions about delivery status (where is the current delivery, when will it come, etc)",
+            )
+        ]
+        return tools

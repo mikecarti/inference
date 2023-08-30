@@ -64,17 +64,19 @@ async def answer_message(payload: MessageLLMPayload) -> dict:
 
 async def prepare_answer(payload: MessageLLMPayload) -> dict:
     message = await user_db.get_from_queue(payload.user_id)
-    answer = process_intents(message)
-    if not answer:
-        answer = await generate_answer(message)
+    answer = await generate_answer_from_llms(message)
     logger.debug(f"Answer before transforming: {wrap(answer)}")
+    answer_with_character = transformer.transform_text(answer, sliders=payload.sliders)
+    logger.debug(f"Answer: {wrap(answer_with_character)}")
+    return {"text": answer_with_character}
 
-    answer = transformer.transform_text(
-        answer,
-        sliders=payload.sliders
-    )
-    logger.debug(f"Answer: {wrap(answer)}")
-    return {"text": answer}
+
+async def generate_answer_from_llms(message):
+    answer_from_intent = nlu_tool(message.text)
+    if answer_from_intent:
+        return answer_from_intent
+    else:
+        return await generate_answer(message)
 
 
 @app.post("/clear_memory/{user_id}")
@@ -92,10 +94,6 @@ async def generate_answer(message: AbstractMessage) -> str:
 
     answer = view.process_answer(answer)
     return answer
-
-
-def process_intents(message: AbstractMessage) -> str:
-    return nlu_tool.run(query=message.text)
 
 
 # alternatively run in console
