@@ -40,6 +40,21 @@ class NLUFramework:
                 name="Delivery-Status",
                 func=lambda x: "Shipment is being delivered. Will come in 10 minutes",
                 description="useful for when you need to answer questions about delivery status (where is the current delivery, when will it come, etc)",
+            ),
+            Tool(
+                name="Virtual-Wallet",
+                func=lambda x: "Virtual wallet linked successfully",
+                description="useful for when you need to link virtual wallet to user's account"
+            ),
+            Tool(
+                name="Document-Status",
+                func=lambda x: "Documents are preparing",
+                description="Check status of documents that were sent to user"
+            ),
+            Tool(
+                name="Refund-Status",
+                func=lambda x: "Refund will be provided in 1 hour",
+                description="Check status of refund for last good that user purchased from our service"
             )
         ]
         return tools
