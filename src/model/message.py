@@ -21,13 +21,13 @@ class RestApiMessage(AbstractMessage):
     pass
 
 
-class MessagePayload(BaseModel):
+class AddMessageQueuePayload(BaseModel):
     text: str
     date: datetime
     from_user: FrontendUser
 
 
-class MessageLLMPayload(BaseModel):
+class RetrieveMessageQueuePayload(BaseModel):
     # id
     user_id: int
     # all_sliders with int values
@@ -36,3 +36,8 @@ class MessageLLMPayload(BaseModel):
     #    ...
     # }
     sliders: Dict[str, int]
+
+class TowardsFrontendPayload(BaseModel):
+    text: str
+    function: str
+    args: List[str]

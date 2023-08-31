@@ -9,7 +9,7 @@ from src.model.text_transform import TextTransformer
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
 from src.model.vector_db import VectorDataBase
-from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser, MessageLLMPayload
+from src.model.message import *
 from src.model.nlu_framework import NLUFramework
 from src.view.view import View
 
@@ -34,7 +34,7 @@ view = View()
 
 
 @app.post("/add_message")
-async def add_message_to_queue(payload: MessagePayload) -> None:
+async def add_message_to_queue(payload: AddMessageQueuePayload) -> None:
     message = RestApiMessage(
         text=payload.text,
         date=payload.date,
@@ -50,7 +50,7 @@ async def add_message_to_queue(payload: MessagePayload) -> None:
 
 
 @app.post("/answer_message")
-async def answer_message(payload: MessageLLMPayload) -> dict:
+async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFrontendPayload:
     try:
         return await prepare_answer(payload)
     except MessageQueueEmptyException:
@@ -62,30 +62,35 @@ async def answer_message(payload: MessageLLMPayload) -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def prepare_answer(payload: MessageLLMPayload) -> dict:
+async def prepare_answer(payload: RetrieveMessageQueuePayload) -> TowardsFrontendPayload:
     message = await user_db.get_from_queue(payload.user_id)
-    answer = await generate_answer_from_llms(message)
+    answer, function, args = await generate_answer_from_llms(message)
     logger.debug(f"Answer before transforming: {wrap(answer)}")
     answer_with_character = transformer.transform_text(answer, sliders=payload.sliders)
     logger.debug(f"Answer: {wrap(answer_with_character)}")
-    return {"text": answer_with_character}
+    return TowardsFrontendPayload(text=answer_with_character, function=function, args=args)
 
 
-async def generate_answer_from_llms(message):
-    answer_from_intent = nlu_tool(message.text)
-    if answer_from_intent:
-        return answer_from_intent
+async def generate_answer_from_llms(message: AbstractMessage) -> TowardsFrontendPayload:
+    answer_with_func_result = generate_answer_with_api_call(message.text)
+    if answer_with_func_result.text:
+        return answer_with_func_result
     else:
         return await generate_answer(message)
 
 
+def generate_answer_with_api_call(text: str) -> TowardsFrontendPayload:
+    text, function, arguments = nlu_tool(text)
+    return TowardsFrontendPayload(text=text, function=function, args=arguments)
+
+
 @app.post("/clear_memory/{user_id}")
-async def clear_memory(user_id: int) -> dict:
+async def clear_memory(user_id: int) -> TowardsFrontendPayload:
     user_db.reset_memory(user_id)
-    return {"text": "Память переписки очищена!"}
+    return TowardsFrontendPayload(text="Память переписки очищена!")
 
 
-async def generate_answer(message: AbstractMessage) -> str:
+async def generate_answer(message: AbstractMessage) -> TowardsFrontendPayload:
     user_id = message.from_user.id
     user_text = message.text
 
@@ -93,7 +98,7 @@ async def generate_answer(message: AbstractMessage) -> str:
     answer = await chain.apredict(memory, user_text)
 
     answer = view.process_answer(answer)
-    return answer
+    return TowardsFrontendPayload(text=answer)
 
 
 # alternatively run in console
