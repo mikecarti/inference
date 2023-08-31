@@ -17,17 +17,23 @@ class NLUFramework:
     def __call__(self, text) -> (str, str, List):
         agent_response = self.agent(text)
         function_name, func_output = self._get_one_func_chain_output(agent_response)
-        text = f"Функция {function_name} вызвана!"
-        return text, function_name, func_output
+        if function_name != "":
+            output_text = f"Функция {function_name} вызвана!"
+        else:
+            output_text = ""
+        return output_text, function_name, func_output
 
     @staticmethod
-    def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List] | Tuple[None, None]:
+    def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List]:
         intermediate_steps = agent_response.get("intermediate_steps")
         # print("agent_response: ", agent_response)
         if not intermediate_steps or len(intermediate_steps) == 0:
             logger.debug("Intent is not recognized")
-            return None, None
+            return "", []
         function_output = intermediate_steps[0][1]
+        function_name = function_output[0]
+        function_outputs = function_output[1]
+
         logger.debug(f"Intent is recognized, function output: {function_output}")
-        return function_output
+        return function_name, function_outputs
 

@@ -1,10 +1,13 @@
 import logging
 import os
+from typing import List
+
 from loguru import logger
 from fastapi import FastAPI, HTTPException
 
 from src.model.chain import Chain
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
+from src.model.payload import AddMessageQueuePayload, RetrieveMessageQueuePayload, TowardsFrontendPayload
 from src.model.text_transform import TextTransformer
 from src.model.user_db.user_db import UserDB
 from src.model.utils import wrap, init_logging
@@ -64,33 +67,33 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
 
 async def prepare_answer(payload: RetrieveMessageQueuePayload) -> TowardsFrontendPayload:
     message = await user_db.get_from_queue(payload.user_id)
-    answer, function, args = await generate_answer_from_llms(message)
+    answer, func_name, args = await generate_answer_from_llms(message)
+
     logger.debug(f"Answer before transforming: {wrap(answer)}")
     answer_with_character = transformer.transform_text(answer, sliders=payload.sliders)
     logger.debug(f"Answer: {wrap(answer_with_character)}")
-    return TowardsFrontendPayload(text=answer_with_character, function=function, args=args)
+    return TowardsFrontendPayload(text=answer_with_character, function=func_name, args=args)
 
 
-async def generate_answer_from_llms(message: AbstractMessage) -> TowardsFrontendPayload:
-    answer_with_func_result = generate_answer_with_api_call(message.text)
-    if answer_with_func_result.text:
-        return answer_with_func_result
-    else:
-        return await generate_answer(message)
-
-
-def generate_answer_with_api_call(text: str) -> TowardsFrontendPayload:
-    text, function, arguments = nlu_tool(text)
-    return TowardsFrontendPayload(text=text, function=function, args=arguments)
+async def generate_answer_from_llms(message: AbstractMessage) -> (str, str, List):
+    """
+    :param message:
+    :return: Answer, Function_Name, Argument_List
+    """
+    answer, func_name, args = nlu_tool(message.text)
+    if func_name:
+        return answer, func_name, args
+    answer_no_function = await generate_answer(message)
+    return answer_no_function, "", []
 
 
 @app.post("/clear_memory/{user_id}")
 async def clear_memory(user_id: int) -> TowardsFrontendPayload:
     user_db.reset_memory(user_id)
-    return TowardsFrontendPayload(text="Память переписки очищена!")
+    return TowardsFrontendPayload(text="Память переписки очищена!", function="", args=[])
 
 
-async def generate_answer(message: AbstractMessage) -> TowardsFrontendPayload:
+async def generate_answer(message: AbstractMessage) -> str:
     user_id = message.from_user.id
     user_text = message.text
 
@@ -98,7 +101,7 @@ async def generate_answer(message: AbstractMessage) -> TowardsFrontendPayload:
     answer = await chain.apredict(memory, user_text)
 
     answer = view.process_answer(answer)
-    return TowardsFrontendPayload(text=answer)
+    return answer
 
 
 # alternatively run in console
