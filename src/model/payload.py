@@ -14,7 +14,7 @@ class AddMessageQueuePayload(BaseModel):
 
 class RetrieveMessageQueuePayload(BaseModel):
     # id
-    user_id: int
+    user_id: str
     # all_sliders with int values
     # {
     #   "anger_level": 0,
