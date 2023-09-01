@@ -1,4 +1,4 @@
-from typing import List, Dict, Callable
+from typing import List, Callable
 from langchain.agents import Tool
 
 
@@ -47,38 +47,23 @@ class ToolConstructor:
         return "Refund will be provided in 1 hour"
 
     def _construct_tools(self) -> List[Tool]:
-        tools = [
-            Tool(
-                name="Frontend-Color-Changer",
-                func=self.change_background_color,
-                description="useful for when you need to change color of website or background. write in hexadecimal "
-                            "representation of color"
-            ),
-            Tool(
-                name="Cashback-Balance",
-                func=self.cashback_balance,
-                description="useful for when you need to answer questions about cashback balance of a user",
-            ),
-            Tool(
-                name="Delivery-Status",
-                func=self.delivery_status,
-                description="useful for when you need to answer questions about delivery status (where is the current "
-                            "delivery, when will it come, etc)",
-            ),
-            Tool(
-                name="Virtual-Wallet",
-                func=self.wallet_linking,
-                description="useful for when you need to link virtual wallet to user's account"
-            ),
-            Tool(
-                name="Document-Status",
-                func=self.document_status,
-                description="Check status of documents that were sent to user"
-            ),
-            Tool(
-                name="Refund-Status",
-                func=self.refund_status,
-                description="Check status of refund for last good that user purchased from our service"
-            )
+        # function = (Callable, Description)
+        functions_with_description = [
+            (self.change_background_color, "Useful for changing website or background color. Input in hexadecimal."),
+            (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
+            (self.delivery_status, "Useful for answering questions about delivery status (current location, ETA, etc)."),
+            (self.wallet_linking, "Useful for linking a virtual wallet to a user's account."),
+            (self.document_status, "Checks the status of documents sent to a user."),
+            (self.refund_status, "Checks the status of a refund for the last item purchased by a user.")
         ]
+        tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
         return tools
+
+    @staticmethod
+    def _make_tool(function: Callable, description: str):
+        tool = Tool(
+            name=function.__name__,
+            func=function,
+            description=description
+        )
+        return tool
