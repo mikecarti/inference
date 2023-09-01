@@ -27,28 +27,28 @@ HelpDesk:
 
 LEVELS = {
     "politeness_level": {
-        0: "not polite, and without use of polite words",
+        0: "not polite and not rude",
         1: "slightly polite",
         2: "medium polite",
         3: "extremely polite and respectful"
     },
     "emotion_level": {
-        0: "is emotionless",
-        1: "has a little amount emotion",
-        2: "has medium amount of emotion",
-        3: "is extremely emotional"
+        0: "emotionless",
+        1: "little bit emotional",
+        2: "pretty emotional",
+        3: "extremely emotional with a lot of emotional expressions"
     },
     "humor_level": {
-        0: "written without jokes",
-        1: "written slightly humorous",
-        2: "written with some jokes",
-        3: "written with extreme amount of jokes and some sarcasm"
+        0: "... (ignore this point)",
+        1: "with little bit of joking",
+        2: "partly (a half) written by a standup comedian helpdesk",
+        3: "written by a professional standup comedian helpdesk that jokes all the time"
     },
     "extensiveness_level": {
-        0: "extremely shorter than in original",
-        1: "shorter than the original",
-        2: "has approximately same length as the original",
-        3: "MUCH more extensive than in original"
+        0: "much shorter than original",
+        1: "... (ignore this point)",
+        2: "is little bit longer than original",
+        3: "MUCH longer than in original"
     }
 
 }
