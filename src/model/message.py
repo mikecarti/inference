@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass()
 class FrontendUser:
-    id: int
+    id: str
     username: str
 
 
