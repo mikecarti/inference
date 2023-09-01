@@ -26,28 +26,28 @@ HelpDesk:
 """
 
 LEVELS = {
-    "anger_level": {
-        0: "not aggressive and not rude",
-        1: "slightly aggressive and rude",
-        2: "aggressive and rude",
-        3: "extremely aggressive and rude"
+    "politeness_level": {
+        0: "not polite, and without use of polite words",
+        1: "slightly polite",
+        2: "medium polite",
+        3: "extremely polite and respectful"
     },
-    "misspelling_level": {
-        0: "spelled perfectly correct",
-        1: "spelled slightly incorrect",
-        2: "spelled mildly incorrect",
-        3: "spelled extremely incorrect"
+    "emotion_level": {
+        0: "is emotionless",
+        1: "has a little amount emotion",
+        2: "has medium amount of emotion",
+        3: "is extremely emotional"
     },
-    "anxiety_level": {
-        0: "written not nervously",
-        1: "written slightly nervously",
-        2: "written nervously with some unsure question repetitions",
-        3: "written extremely nervous with a lot of unsure question repetitions"
+    "humor_level": {
+        0: "written without jokes",
+        1: "written slightly humorous",
+        2: "written with some jokes",
+        3: "written with extreme amount of jokes and some sarcasm"
     },
     "extensiveness_level": {
         0: "extremely shorter than in original",
-        1: "shorter than in original",
-        2: "has same length as in original",
+        1: "shorter than the original",
+        2: "has approximately same length as the original",
         3: "MUCH more extensive than in original"
     }
 
