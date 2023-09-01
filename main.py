@@ -1,5 +1,6 @@
 import logging
 import os
+import traceback
 from typing import List
 
 from loguru import logger
@@ -61,7 +62,7 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
     except LimitExceededException:
         raise HTTPException(status_code=429, detail="Spam limit exceeded")
     except Exception as e:
-        logger.debug(f"Exception: {e}")
+        logger.debug(f"Exception: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
