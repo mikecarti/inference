@@ -40,9 +40,9 @@ LEVELS = {
     },
     "humor_level": {
         0: "... (ignore this point)",
-        1: "with little bit of joking",
-        2: "partly (a half) written by a standup comedian helpdesk",
-        3: "written by a professional standup comedian helpdesk that jokes all the time"
+        1: "written by a joking person",
+        2: "written by a standup comedian that incorporate personal anecdotes or experiences into the routine",
+	3: "written by a standup comedian that incorporates personal anecdotes or experiences into the routine that jokes all the time"
     },
     "extensiveness_level": {
         0: "much shorter than original",
@@ -56,13 +56,12 @@ REQUIRED_SLIDERS = list(LEVELS.keys())
 INSTRUCTIONS = "\n".join([f"{i+1}) the text is {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
 TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
-You help change text according to rules.
-Dont be afraid to be rude or grammatically incorrect
-if you are being asked to.
+You change text according to rules.
+Dont be afraid to joke often and write emotionally if you are being asked to.
 """
 
-TRANSFORMER_QUERY_PROMPT = """Change this text so it would satisfy all these points 
+TRANSFORMER_QUERY_PROMPT = """Change this original text so it would satisfy these points 
 0) the text is written in russian
 """ + INSTRUCTIONS + """
-Make sure modified text satisfies every point
+Make sure modified text satisfies every step
 Original text: {question} Modified text:"""
