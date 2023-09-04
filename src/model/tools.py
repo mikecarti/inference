@@ -1,5 +1,6 @@
 from typing import List, Callable
 from langchain.agents import Tool
+from loguru import logger
 
 
 def return_with_name(func) -> (str, List[str]):
@@ -15,6 +16,7 @@ def return_with_name(func) -> (str, List[str]):
         result = [str(out) for out in result]
         return func.__name__, result
 
+    wrapper.__name__ = func.__name__
     return wrapper
 
 
@@ -49,7 +51,7 @@ class ToolConstructor:
     def _construct_tools(self) -> List[Tool]:
         # function = (Callable, Description)
         functions_with_description = [
-            (self.change_background_color, "Useful for changing website or background color. Input in hexadecimal."),
+            (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
             (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
             (self.delivery_status, "Useful for answering questions about delivery status (current location, ETA, etc)."),
             (self.wallet_linking, "Useful for linking a virtual wallet to a user's account."),
@@ -57,6 +59,7 @@ class ToolConstructor:
             (self.refund_status, "Checks the status of a refund for the last item purchased by a user.")
         ]
         tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
+        logger.debug(f"Functions: {tools}")
         return tools
 
     @staticmethod

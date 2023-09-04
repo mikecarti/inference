@@ -34,9 +34,9 @@ LEVELS = {
     },
     "emotion_level": {
         0: "",
-        1: "Make the text a little bit emotional",
-        2: "Make the text pretty emotional with a lot of emotional expressions",
-        3: "Make the text extremely emotional with a lot of emotional expressions"
+        1: "Add a slight emotional tone to the text.",
+        2: "Add a significant emotional tone with multiple emotional expressions to the text.",
+        3: "Infuse the text with an extremely strong emotional tone, incorporating a wide range of emotional expressions."
     },
     "humor_level": {
         0: "",
