@@ -29,39 +29,41 @@ LEVELS = {
     "politeness_level": {
         0: "not polite and not rude",
         1: "slightly polite",
-        2: "medium polite",
+        2: "",
         3: "extremely polite and respectful"
     },
     "emotion_level": {
-        0: "emotionless",
+        0: "",
         1: "little bit emotional",
         2: "pretty emotional",
         3: "extremely emotional with a lot of emotional expressions"
     },
     "humor_level": {
-        0: "...",
+        0: "",
         1: "written by a joking person",
         2: "written by a standup comedian that incorporate personal anecdotes or experiences into the routine",
-	3: "written by a standup comedian that incorporates personal anecdotes or experiences into the routine that jokes all the time"
+	    3: "written in style of standup comedian that incorporates personal experiences into the routine"
     },
     "extensiveness_level": {
-        0: "much shorter than original",
-        1: "...",
+        0: "much shorter than original. shortened in 1-2 sentences",
+        1: "",
         2: "is little bit longer than original",
         3: "MUCH longer than in original"
     }
 
 }
 REQUIRED_SLIDERS = list(LEVELS.keys())
-INSTRUCTIONS = "\n".join([f"{i+1}) the text is {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
+INSTRUCTIONS = "\n".join([f"{i+1}) the text is {{{REQUIRED_SLIDERS[i]}}}"for i in range(len(REQUIRED_SLIDERS)) if REQUIRED_SLIDERS[i] != "" ])
 
 TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
 You change text according to rules.
 Dont be afraid to joke often and write emotionally if you are being asked to.
 """
 
-TRANSFORMER_QUERY_PROMPT = """Change this original text so it would satisfy these points 
+TRANSFORMER_QUERY_PROMPT = """Change this original text so it would satisfy these points. 
+If needed you can omit some information or add some to satisfy these points better.
+Points:
 0) the text is written in russian
 """ + INSTRUCTIONS + """
-Make sure modified text satisfies every step
-Original text: {question} Modified text:"""
+Make sure modified text satisfies every point above
+Original text: {question} \nModified text:"""
