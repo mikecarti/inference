@@ -39,14 +39,14 @@ LEVELS = {
         3: "extremely emotional with a lot of emotional expressions"
     },
     "humor_level": {
-        0: "... (ignore this point)",
+        0: "...",
         1: "written by a joking person",
         2: "written by a standup comedian that incorporate personal anecdotes or experiences into the routine",
 	3: "written by a standup comedian that incorporates personal anecdotes or experiences into the routine that jokes all the time"
     },
     "extensiveness_level": {
         0: "much shorter than original",
-        1: "... (ignore this point)",
+        1: "...",
         2: "is little bit longer than original",
         3: "MUCH longer than in original"
     }
