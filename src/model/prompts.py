@@ -36,7 +36,8 @@ LEVELS = {
         0: "",
         1: "Add a slight emotional tone to the text.",
         2: "Add a significant emotional tone with multiple emotional expressions to the text.",
-        3: "Infuse the text with an extremely strong emotional tone, incorporating a wide range of emotional expressions."
+        3: "Make the text highly emotional, invoking strong emotional responses.  Rewrite the original text using a "
+           "tone that is extremely emotional. Incorporate a wide range of intense emotional expressions."
     },
     "humor_level": {
         0: "",
@@ -61,11 +62,12 @@ LEVELS = {
 REQUIRED_SLIDERS = list(LEVELS.keys())
 INSTRUCTIONS = "\n".join([f"{i + 1}) {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
-TRANSFORMER_SYSTEM_PROMPT = """From now on professional text changer
+TRANSFORMER_SYSTEM_PROMPT = """From now you are a professional text changer
 if you are asked to change text (from Original to Modified), then you must obey and change it according to all rules. 
+You will be asked to change text. You will provide a version of text written by all rules below.
 """
 
-TRANSFORMER_QUERY_PROMPT = """Rewrite original text into new Modified text that is written by these rules: 
+TRANSFORMER_QUERY_PROMPT = """Rewrite original text into just one new Modified text that is written by these rules: 
 Points:
 0.1) ignore empty points
 0.2) the text is written in russian
