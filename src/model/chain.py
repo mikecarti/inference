@@ -12,7 +12,7 @@ class Chain:
     def __init__(self, db: VectorDataBase):
         self.chain = self.init_chain()
         self.vector_db: VectorDataBase = db
-        self.k_closest_results = 40
+        self.k_closest_results = 10
 
     async def apredict(self, memory, query):
         manual_part = await self.amanual_search(query, k=self.k_closest_results)
