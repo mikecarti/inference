@@ -21,7 +21,7 @@ HelpDesk:
 
 LEVELS = {
     "politeness_level": {
-        0: "impolitely",
+        0: "without polite words",
         1: "slightly politely",
         2: "",
         3: "over-politely"
@@ -57,6 +57,7 @@ if you are being asked to.
 """
 
 TRANSFORMER_QUERY_PROMPT = """Change this text so it would be written both
+- grammatically correct
 - in russian
 """ + INSTRUCTIONS + """
 All of these changes must be done simultaneously on one example of text.
