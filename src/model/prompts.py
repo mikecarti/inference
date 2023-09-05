@@ -27,49 +27,37 @@ HelpDesk:
 
 LEVELS = {
     "politeness_level": {
-        0: "Rewrite the original text into a not polite and not rude text",
-        1: "Make the text slightly polite",
+        0: "unpolite",
+        1: "slightly polite",
         2: "",
-        3: "Make the text extremely polite and respectful"
+        3: "very polite"
     },
     "emotion_level": {
-        0: "",
-        1: "Add a slight emotional tone to the text.",
-        2: "Add a significant emotional tone with multiple emotional expressions to the text.",
-        3: "Make the text highly emotional, invoking strong emotional responses.  Rewrite the original text using a "
-           "tone that is extremely emotional. Incorporate a wide range of intense emotional expressions."
+        0: "not emotional",
+        1: "",
+        2: "very emotional",
+        3: "extremely emotional"
     },
     "humor_level": {
         0: "",
-        1: "Rewrite the original text with a little bit of humor to the text to make it funny and entertaining."
-           " You can use wordplay, jokes, or humorous anecdotes to achieve this.",
-        2: "Rewrite the original text with humor to the text to make it funny and entertaining."
-           " You can use wordplay, jokes, or humorous anecdotes to achieve this.",
-        3: "Rewrite the original text with HUGE AMOUNT of humor to the text to make it funny and entertaining."
-           " You can use wordplay, jokes, or humorous anecdotes to achieve this."
+        1: "with unfunny jokes and anecdotes",
+        2: "with ironic jokes",
+        3: "with ironic and sarcastic jokes"
     },
     "extensiveness_level": {
-        0: "Rewrite the original text into a concise summary while retaining the key information. "
-           "Limit the modified text to 10 words or less.",
-        1: "Rewrite the original text into a concise summary while retaining the key information. "
-           "Limit the modified text to more than 10 and less than 20 words, dont write words number.",
-        2: "Rewrite the original text into a concise summary while retaining the key information. "
-           "Limit the modified text to more than 20 and less than 30 words, dont write words number.",
+        0: "in less than 10 words ",
+        1: "in less than 20 words",
+        2: "in less than 30 words",
         3: ""
     }
 }
 
 REQUIRED_SLIDERS = list(LEVELS.keys())
-INSTRUCTIONS = "\n".join([f"{i + 1}) {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
+INSTRUCTIONS = ", ".join([f"{{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
-TRANSFORMER_SYSTEM_PROMPT = """From now you are a professional text changer
-if you are asked to change text (from Original to Modified), then you must obey and change it according to all rules. 
-You will be asked to change text. You will provide a version of text written by all rules below.
+TRANSFORMER_SYSTEM_PROMPT = """
 """
 
-TRANSFORMER_QUERY_PROMPT = """Rewrite original text into just one new Modified text that is written by these rules: 
-Points:
-0.1) ignore empty points
-0.2) the text is written in russian
-""" + INSTRUCTIONS + """
+TRANSFORMER_QUERY_PROMPT = """You have to write a new text based on original that will be written: 
+in russian, """ + INSTRUCTIONS + """
 Original text: {question} \nModified text:"""

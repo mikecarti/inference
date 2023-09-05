@@ -48,7 +48,7 @@ class ToolConstructor:
     def refund_status(self, x):
         return "Refund will be provided in 1 hour"
 
-    def _construct_tools(self) -> List[Tool]:
+    def _construct_tools(self, debug=False) -> List[Tool]:
         # function = (Callable, Description)
         functions_with_description = [
             (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
@@ -59,7 +59,8 @@ class ToolConstructor:
             (self.refund_status, "Checks the status of a refund for the last item purchased by a user.")
         ]
         tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
-        logger.debug(f"Functions: {tools}")
+        if debug:
+            logger.debug(f"Functions: {tools}")
         return tools
 
     @staticmethod
