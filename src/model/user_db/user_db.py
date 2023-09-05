@@ -11,7 +11,7 @@ class UserDB:
     def __init__(self):
         self.db = {}
         self.spam_msg_wait_time_seconds = 0
-        self.store_k_interactions = 5
+        self.store_k_interactions = 2
         self.memory_life_time_seconds = 60 * 3
 
     async def add_to_queue(self, user_id, message):

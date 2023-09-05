@@ -7,14 +7,7 @@ Help user to solve his problem by using information from Manual.
 You dont have to copy whats writen in manual. If you know how to phrase something better, do it.
 Note that Manual consists of instructions that you must fulfill in your conversation with the user.
 Also dont mention that your knowledge is based on Manual. Just follow it's instructions.
-
-Important info:
-You must answer impolitely,
-You must answer very happyly and emotionally
-you must add humorous jokes in style of Jimmy Carr, but dont mention his name.
-and summarize text, so it would be less than 20 words.
-(End of important info)
-
+You must write less than 30 words. You are prohibited to write more than that.
 
 Manual is attached below
 {manual_part}
@@ -28,37 +21,43 @@ HelpDesk:
 
 LEVELS = {
     "politeness_level": {
-        0: "unpolite",
-        1: "slightly polite",
+        0: "impolitely",
+        1: "slightly politely",
         2: "",
-        3: "very polite"
-    },
-    "emotion_level": {
-        0: "not emotional",
-        1: "",
-        2: "very emotional",
-        3: "extremely emotional"
-    },
-    "humor_level": {
-        0: "",
-        1: "with unfunny jokes and anecdotes",
-        2: "with ironic jokes",
-        3: "with ironic and sarcastic jokes"
+        3: "over-politely"
     },
     "extensiveness_level": {
-        0: "in less than 10 words ",
+        0: "in less than 10 words",
         1: "in less than 20 words",
         2: "in less than 30 words",
         3: ""
-    }
+    },
+    "emotion_level": {
+        0: "non-emotionally",
+        1: "",
+        2: "with emojis",
+        3: "with enormous number of emojis"
+    },
+    "humor_level": {
+        0: "",
+        1: "silly and funny",
+        2: "in style of a comedian Jimmy Carr",
+        3: "in style of a comedian Jimmy Carr"
+    },
 }
 
 REQUIRED_SLIDERS = list(LEVELS.keys())
-INSTRUCTIONS = ", ".join([f"{{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
+INSTRUCTIONS = "\n".join([f"- {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
-TRANSFORMER_SYSTEM_PROMPT = """
+
+TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
+You change text according to rules.
+Dont be afraid to joke a lot in style of Jimmy Carr or be very emotional
+if you are being asked to.
 """
 
-TRANSFORMER_QUERY_PROMPT = """You have to write a new text based on original that will be written: 
-in russian, """ + INSTRUCTIONS + """
-Original text: {question} \nModified text:"""
+TRANSFORMER_QUERY_PROMPT = """Change this text so it would be written both
+- in russian
+""" + INSTRUCTIONS + """
+All of these changes must be done simultaneously on one example of text.
+Original text: {question} Modified text:"""

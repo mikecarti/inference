@@ -71,9 +71,9 @@ async def prepare_answer(payload: RetrieveMessageQueuePayload) -> TowardsFronten
     answer, func_name, args = await generate_answer_from_llms(message)
 
     logger.debug(f"Answer before transforming: {wrap(answer)}")
-    # answer_with_character = transformer.transform_text(answer, sliders=payload.sliders)
-    # logger.debug(f"Answer: {wrap(answer_with_character)}")
-    return TowardsFrontendPayload(text=answer, function=func_name, args=args)
+    answer_with_character = transformer.transform_text(answer, sliders=payload.sliders)
+    logger.debug(f"Answer: {wrap(answer_with_character)}")
+    return TowardsFrontendPayload(text=answer_with_character, function=func_name, args=args)
 
 
 async def generate_answer_from_llms(message: AbstractMessage) -> (str, str, List):
