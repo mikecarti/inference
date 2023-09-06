@@ -12,11 +12,19 @@ class NLUFramework:
         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613")
         tools = ToolConstructor().tools
         self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True,
-                                      return_intermediate_steps=True)
+                                      return_intermediate_steps=True, max_iterations=1)
+        self.suffix = "\nТы обязан ответить на это одним словом"
 
-    def __call__(self, text) -> (str, str, List):
-        agent_response = self.agent(text)
+    def __call__(self, text, verbose=False) -> (str, str, List):
+        logger.debug(f"NLU Processing for text: {text}")
+
+        agent_response = self.agent(text + self.suffix)
         function_name, func_output = self._get_one_func_chain_output(agent_response)
+
+        logger.debug(f"Function: {function_name},"
+                     f"Function output: {func_output},"
+                     f"agent_response: {agent_response}")
+
         if function_name != "":
             output_text = f"Функция {function_name} вызвана!"
         else:

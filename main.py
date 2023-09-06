@@ -2,6 +2,7 @@ import logging
 import os
 import traceback
 from typing import List
+import cProfile
 
 from loguru import logger
 from fastapi import FastAPI, HTTPException
@@ -81,7 +82,7 @@ async def generate_answer_from_llms(message: AbstractMessage) -> (str, str, List
     :param message:
     :return: Answer, Function_Name, Argument_List
     """
-    answer, func_name, args = nlu_tool(message.text)
+    answer, func_name, args = nlu_tool(message.text, verbose=True)
     if func_name:
         return answer, func_name, args
     answer_no_function = await generate_answer(message)
@@ -104,11 +105,13 @@ async def generate_answer(message: AbstractMessage) -> str:
     answer = view.process_answer(answer)
     return answer
 
-
-# alternatively run in console
-# uvicorn main:app --host 0.0.0.0 --port 8000
-if __name__ == '__main__':
+def main():
     import uvicorn
 
     # os.environ["PYTHONASYNCIODEBUG"] = "1"
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# alternatively run in console
+# uvicorn main:app --host 0.0.0.0 --port 8000
+if __name__ == '__main__':
+    cProfile.run("main()", sort="cumtime")
