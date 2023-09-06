@@ -33,23 +33,6 @@ class User:
         self._reset_countdown()
         return self.memory
 
-    async def add_to_queue(self, message: AbstractMessage) -> None:
-        # this method may be blocking if queue has element number limit
-        print("Message added to q: ", message.text)
-        await self.message_queue.put(message)
-
-    async def get_from_queue(self) -> AbstractMessage:
-        if self.message_queue.empty():
-            sys_msg = f"Queue of user {self.id_, self.name} empty"
-            logger.debug(sys_msg)
-            raise MessageQueueEmptyException(sys_msg)
-        if self._user_sent_message_recently():
-            sys_msg = f"Spam prevention for user {self.id_, self.name}"
-            logger.debug(sys_msg)
-            raise LimitExceededException(sys_msg)
-        message = await self._collect_message_from_recent_messages()
-        return message
-
     def reset_memory(self) -> None:
         if self.log_resets:
             logger.debug(f"Memory of user {self.id_} was reset")
@@ -63,45 +46,38 @@ class User:
         self.problem_solved_countdown = threading.Timer(self.memory_life_time_seconds, self.reset_memory)
         self.problem_solved_countdown.start()
 
-    async def _collect_message_from_recent_messages(self) -> AbstractMessage:
-        prev_q_size = -1
-        # while messages keep coming, collect messages
-        last_message, messages = None, []
-        while self.message_queue.qsize() != prev_q_size:
-            prev_q_size = self.message_queue.qsize()
-            last_message, message_queue, messages = self._collect_time_close_messages()
-            time_elapsed = (datetime.datetime.now() - last_message.date).total_seconds()
-            time_to_wait = self._spam_msg_wait_time_seconds - time_elapsed
-            await asyncio.sleep(time_to_wait)
-        # extract messages from queue
-        for _ in range(self.message_queue.qsize()):
-            self.message_queue.get_nowait()
-        # connect messages
-        last_message.text = " ".join(messages)
-        return last_message
+    async def add_to_queue(self, message):
+        print(f"Message added to queue for user {self.id_}, {self.name}: {message.text}")
+        await self.message_queue.put(message)
 
-    def _collect_time_close_messages(self) -> (AbstractMessage, asyncio.Queue, List[AbstractMessage]):
-        message_queue = self.message_queue._queue
-        last_message = message_queue[-1]
-        prev_msg = message_queue[0]  # trick
-        messages = []
-        # collect messages until long break or until no more messages left
-        for msg in message_queue:
-            if self._sufficient_time_difference(prev_msg.date, msg.date):
+    async def get_from_queue(self):
+        try:
+            last_message = await asyncio.wait_for(self.message_queue.get(), timeout=self._spam_msg_wait_time_seconds)
+            if self._user_sent_message_recently(last_message):
+                raise LimitExceededException(f"Spam prevention for user {self.id_}, {self.name}")
+            message = await self._collect_message_from_recent_messages(last_message)
+            return message
+        except asyncio.TimeoutError:
+            raise MessageQueueEmptyException(
+                f"Queue of user {self.id_}, {self.name} empty. Either user messages are being summarized or an answer was requested without adding a user message to the queue")
+
+    async def _collect_message_from_recent_messages(self, last_message):
+        messages = [last_message.text]
+        while True:
+            try:
+                message = await asyncio.wait_for(self.message_queue.get(), timeout=self._spam_msg_wait_time_seconds)
+                if self._sufficient_time_difference(last_message.date, message.date):
+                    break
+                messages.append(message.text)
+            except asyncio.TimeoutError:
                 break
-            prev_msg = msg
-            messages.append(msg.text)
-        return last_message, message_queue, messages
+        return last_message._replace(text=" ".join(messages))
 
-    def _user_sent_message_recently(self) -> bool:
-        if self.message_queue.empty():
-            return False
-        last_message: AbstractMessage = self.message_queue._queue[0]
+    def _user_sent_message_recently(self, last_message):
         now = datetime.datetime.now()
-        last_message_dt = last_message.date
-        return not self._sufficient_time_difference(last_message_dt, now)
+        return not self._sufficient_time_difference(last_message.date, now, self._spam_msg_wait_time_seconds)
 
-    def _sufficient_time_difference(self, dt1: datetime.datetime, dt2: datetime.datetime) -> bool:
+    @staticmethod
+    def _sufficient_time_difference(dt1, dt2, threshold):
         time_difference = dt2 - dt1
-        enough_time_passed = abs(time_difference.total_seconds()) > self._spam_msg_wait_time_seconds
-        return enough_time_passed
+        return abs(time_difference.total_seconds()) > threshold
