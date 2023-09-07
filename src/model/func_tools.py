@@ -13,7 +13,7 @@ class ToolConstructor:
     def construct_tools(self, debug=False) -> List[Tool]:
         functions_with_description = [
             (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
-            (self.change_message_color, "Useful for changing color of messages"),
+            (self.change_message_color, "Useful for changing color of messages. Input color in hexadecimal."),
             (self.randomize_personality_sliders, "Useful for changing personalities settings or for changing sliders"),
             (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
             (self.delivery_status, "Useful for answering questions about delivery status (cur. location, ETA, etc)."),
