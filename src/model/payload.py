@@ -3,13 +3,23 @@ from typing import Dict, List
 
 from pydantic import BaseModel
 
-from src.model.message import FrontendUser
+from src.model.message import FrontendUser, UserMessage
 
 
 class AddMessageQueuePayload(BaseModel):
     text: str
     date: datetime
     from_user: FrontendUser
+
+    def to_user_message(self) -> UserMessage:
+        return UserMessage(
+            text=self.text,
+            date=self.date,
+            from_user=FrontendUser(
+                id=self.from_user.id,
+                username=self.from_user.username
+            )
+        )
 
 
 class RetrieveMessageQueuePayload(BaseModel):

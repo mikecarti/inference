@@ -16,7 +16,7 @@ class AbstractMessage:
 
 
 @dataclass()
-class RestApiMessage(AbstractMessage):
+class UserMessage(AbstractMessage):
     pass
 
 
