@@ -8,7 +8,7 @@ from loguru import logger
 from src.controller.controller import prepare_answer, user_db
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
 from src.model.payload import AddMessageQueuePayload, RetrieveMessageQueuePayload, TowardsFrontendPayload
-from src.model.utils import init_logging
+from src.model.utils import init_logging, get_random_hint
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -16,8 +16,6 @@ init_logging()
 
 # Initialize API
 app = FastAPI()
-
-
 
 
 @app.post("/add_message")
@@ -41,9 +39,13 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
         logger.debug(f"Exception: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/get_hint/{user_id}")
 async def get_hint(user_id: int) -> TowardsFrontendPayload:
-    hint =
+    hint = get_random_hint()
+    user_db.add_ai_message(ai_message=hint, user_id=user_id)
+    return TowardsFrontendPayload(text=hint, function="", args=[])
+
 
 @app.post("/clear_memory/{user_id}")
 async def clear_memory(user_id: int) -> TowardsFrontendPayload:

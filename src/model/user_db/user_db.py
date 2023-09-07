@@ -1,5 +1,7 @@
 from langchain.memory import ConversationBufferWindowMemory
+from langchain.schema import BaseMemory
 
+from src.model.message import AbstractMessage
 from src.model.user_db.user import User
 from typing import *
 
@@ -14,39 +16,44 @@ class UserDB:
         self.store_k_interactions = 2
         self.memory_life_time_seconds = 60 * 3
 
-    async def add_to_queue(self, user_id, message):
+    async def add_to_queue(self, user_id: str, message: AbstractMessage):
         if not self._user_exists(user_id):
             self._add_user(user_id)
         user = self.db[user_id]
         await user.add_to_queue(message)
 
-    async def get_from_queue(self, user_id):
+    async def get_from_queue(self, user_id: str):
         if not self._user_exists(user_id):
             raise KeyError(f"User {user_id} is not existing")
         user = self.db[user_id]
         message = await user.get_from_queue()
         return message
 
-    def notify_queue_message_processed(self, user_id):
+    def notify_queue_message_processed(self, user_id: str):
         self._get(user_id).task_done()
 
     def get_user_ids(self) -> List[id]:
         return list(self.db.keys())
 
-    def reset_memory(self, user_id) -> None:
+    def reset_memory(self, user_id: str) -> None:
         self._get(user_id).reset_memory()
 
-    def get_memory(self, user_id):
+    def get_memory(self, user_id: str) -> ConversationBufferWindowMemory:
         if self._user_exists(user_id):
             user = self._get(user_id)
         else:
             user = self._add_user(user_id)
         return user.get_memory()
 
-    def _get(self, user_id) -> User:
+    def add_ai_message(self, ai_message: str, user_id: str):
+        memory = self.get_memory(user_id)
+        memory.chat_memory.add_ai_message(ai_message)
+        return ai_message
+
+    def _get(self, user_id: str) -> User:
         return self.db.get(user_id)
 
-    def _add_user(self, user_id) -> User:
+    def _add_user(self, user_id: str) -> User:
         if self._user_exists(user_id):
             raise UserExistsException(f"User {user_id} exists")
 
@@ -58,7 +65,7 @@ class UserDB:
         self.db[user_id] = user
         return user
 
-    def _user_exists(self, user_id):
+    def _user_exists(self, user_id: str):
         if self.db.get(user_id):
             return True
         else:

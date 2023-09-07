@@ -29,7 +29,7 @@ class User:
         self.message_queue = asyncio.Queue()
         self.log_resets = False
 
-    def get_memory(self) -> BaseMemory:
+    def get_memory(self) -> ConversationBufferWindowMemory:
         self._reset_countdown()
         return self.memory
 
