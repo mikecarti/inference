@@ -1,32 +1,43 @@
+from random import randint
 from typing import List, Callable
 from langchain.agents import Tool
 from loguru import logger
 
-
-def return_with_name(func) -> (str, List[str]):
-    """
-    :param func:
-    :return: function name and list of output
-    """
-
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        if type(result) != list and type(result) != tuple:
-            result = [result]
-        result = [str(out) for out in result]
-        return func.__name__, result
-
-    wrapper.__name__ = func.__name__
-    return wrapper
+from src.model.utils import return_with_name
 
 
 class ToolConstructor:
     def __init__(self):
-        self.tools = self._construct_tools()
+        self.tools = self.construct_tools()
+
+    def construct_tools(self, debug=False) -> List[Tool]:
+        functions_with_description = [
+            (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
+            (self.change_message_color, "Useful for changing color of messages"),
+            (self.randomize_personality_sliders, "Useful for changing personalities settings or for changing sliders"),
+            (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
+            (self.delivery_status, "Useful for answering questions about delivery status (cur. location, ETA, etc)."),
+            (self.wallet_linking, "Useful for linking a virtual wallet to a user's account."),
+            (self.document_status, "Checks the status of documents sent to a user."),
+            (self.refund_status, "Checks the status of a refund for the last item purchased by a user."),
+        ]
+        # function = (Callable, Description)
+        tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
+        if debug:
+            logger.debug(f"Functions: {tools}")
+        return tools
 
     @return_with_name
     def change_background_color(self, color_hex: str):
         return color_hex
+
+    @return_with_name
+    def change_message_color(self, color_hex: str):
+        return color_hex
+
+    @return_with_name
+    def randomize_personality_sliders(self, x):
+        return [randint(0, 3) for _ in range(8)]
 
     @return_with_name
     def cashback_balance(self, x):
@@ -47,21 +58,6 @@ class ToolConstructor:
     @return_with_name
     def refund_status(self, x):
         return "Refund will be provided in 1 hour"
-
-    def _construct_tools(self, debug=False) -> List[Tool]:
-        # function = (Callable, Description)
-        functions_with_description = [
-            (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
-            (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
-            (self.delivery_status, "Useful for answering questions about delivery status (current location, ETA, etc)."),
-            (self.wallet_linking, "Useful for linking a virtual wallet to a user's account."),
-            (self.document_status, "Checks the status of documents sent to a user."),
-            (self.refund_status, "Checks the status of a refund for the last item purchased by a user.")
-        ]
-        tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
-        if debug:
-            logger.debug(f"Functions: {tools}")
-        return tools
 
     @staticmethod
     def _make_tool(function: Callable, description: str):

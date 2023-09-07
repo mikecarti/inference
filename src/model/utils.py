@@ -1,6 +1,8 @@
 import json
 import sys
 import textwrap
+from typing import List
+
 from loguru import logger
 from random import choice
 
@@ -20,3 +22,20 @@ def get_random_hint() -> str:
         data = json.load(file)
         hints = data['data']
         return choice(hints)
+
+
+def return_with_name(func) -> (str, List[str]):
+    """
+    :param func:
+    :return: function name and list of output
+    """
+
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if type(result) != list and type(result) != tuple:
+            result = [result]
+        result = [str(out) for out in result]
+        return func.__name__, result
+
+    wrapper.__name__ = func.__name__
+    return wrapper
