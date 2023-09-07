@@ -1,6 +1,5 @@
 import cProfile
 import logging
-import os
 import traceback
 
 from fastapi import FastAPI, HTTPException
@@ -42,6 +41,9 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
         logger.debug(f"Exception: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/get_hint/{user_id}")
+async def get_hint(user_id: int) -> TowardsFrontendPayload:
+    hint =
 
 @app.post("/clear_memory/{user_id}")
 async def clear_memory(user_id: int) -> TowardsFrontendPayload:

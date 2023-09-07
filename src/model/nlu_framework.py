@@ -2,7 +2,7 @@ from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
 from langchain.chat_models import ChatOpenAI
 from loguru import logger
-from src.model.tools import ToolConstructor
+from src.model.func_tools import ToolConstructor
 
 from typing import List, Tuple
 
