@@ -9,7 +9,7 @@ from typing import List, Tuple
 
 class NLUFramework:
     def __init__(self):
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613")
+        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=100)
         tools = ToolConstructor().tools
         self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True,
                                       return_intermediate_steps=True, max_iterations=1)
