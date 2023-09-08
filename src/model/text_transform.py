@@ -8,7 +8,7 @@ from src.model.prompts import TRANSFORMER_SYSTEM_PROMPT, TRANSFORMER_QUERY_PROMP
 
 class TextTransformer:
     def __init__(self):
-        self._llm = ChatOpenAI(model="gpt-3.5-turbo")
+        self._llm = ChatOpenAI(model="gpt-3.5-turbo", max_tokens=700)
 
     def transform_text(self, text: str, sliders: dict) -> str:
         for req_slider in REQUIRED_SLIDERS:
