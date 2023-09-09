@@ -45,6 +45,7 @@ async def generate_answer_from_llms(message: AbstractMessage) -> (str, str, List
     """
     answer, func_name, args = nlu_tool(message.text, verbose=True)
     if func_name:
+        user_db.add_ai_message(ai_message=answer, user_id=message.from_user.id)
         return answer, func_name, args
     answer_no_function = await generate_answer(message)
     return answer_no_function, "", []
