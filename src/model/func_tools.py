@@ -1,4 +1,5 @@
-from random import randint
+from time import time
+import random
 from typing import List, Callable
 from langchain.agents import Tool
 from loguru import logger
@@ -71,7 +72,9 @@ class ToolConstructor:
 
     @return_with_name
     def randomize_personality_sliders(self, any_input: str):
-        return [randint(0, 3) for _ in range(8)]
+        seed = int(time() * 1000)  # Use the current system time as a seed
+        random.seed(seed)
+        return [random.randint(0, 3) for _ in range(8)]
 
     @return_with_name
     def cashback_balance(self, x):
