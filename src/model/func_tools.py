@@ -32,17 +32,17 @@ class ToolConstructor:
                 "Useful for changing personality of bots to random",
                 EmptyInputSchema
             ),
-            (
-                self.cashback_balance,
-                "Useful for answering questions about a user's cashback balance.",
-                EmptyInputSchema
-            ),
-            (
-                self.delivery_status,
-                "Call this function when the user is interested in their delivery/package (e.g., ETA or location).",
-                EmptyInputSchema
-            ),
-            # Add or uncomment other tuples as needed
+            # (
+            #     self.cashback_balance,
+            #     "Useful for answering questions about a user's cashback balance.",
+            #     EmptyInputSchema
+            # ),
+            # (
+            #     self.delivery_status,
+            #     "Call this function when the user is interested in their delivery/package (e.g., ETA or location).",
+            #     EmptyInputSchema
+            # ),
+            #
             # (
             #     self.wallet_linking,
             #     "Useful for linking a virtual wallet to a user's account."

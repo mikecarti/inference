@@ -15,6 +15,9 @@ class TextTransformer:
             assert sliders.get(req_slider) is not None
             assert 0 <= sliders.get(req_slider) <= 3
 
+        if self._sliders_are_default(sliders):
+            return text
+
         prompt = self._build_transformation_prompt(question=text, sliders=sliders)
         return self._llm(prompt).content
 
@@ -30,6 +33,11 @@ class TextTransformer:
             value_to_text = LEVELS.get(slider_name)
             sliders_text[slider_name] = value_to_text.get(slider_value)
         return sliders_text
+
+    @staticmethod
+    def _sliders_are_default(sliders) -> bool:
+        default_state = {'politeness_level': 2, 'emotion_level': 1, 'humor_level': 0, 'extensiveness_level': 1}
+        return sliders == default_state
 
 
 PROMPT = ChatPromptTemplate.from_messages(
