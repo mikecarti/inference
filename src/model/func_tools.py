@@ -39,7 +39,7 @@ class ToolConstructor:
         return color_hex
 
     @return_with_name
-    def randomize_personality_sliders(self, *x):
+    def randomize_personality_sliders(self, *args, **kwargs):
         return [randint(0, 3) for _ in range(8)]
 
     @return_with_name
