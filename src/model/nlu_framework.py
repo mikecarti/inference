@@ -34,7 +34,6 @@ class NLUFramework:
     @staticmethod
     def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List]:
         intermediate_steps = agent_response.get("intermediate_steps")
-        # print("agent_response: ", agent_response)
         if not intermediate_steps or len(intermediate_steps) == 0:
             logger.debug("Intent is not recognized")
             return "", []
