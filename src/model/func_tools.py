@@ -14,7 +14,7 @@ class ToolConstructor:
         functions_with_description = [
             (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
             (self.change_message_color, "Useful for changing color of messages. Input color in hexadecimal."),
-            (self.randomize_personality_sliders, "Useful for changing personalities settings to random or for changing sliders (ползунки)"),
+            (self.randomize_personality_sliders, "Useful for changing sliders (ползунки in russian)"),
             (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
             (self.delivery_status, "Call this function when user is interested about his delivery / package (for "
                                    "example ETA or location, etc)."),
@@ -39,7 +39,7 @@ class ToolConstructor:
         return color_hex
 
     @return_with_name
-    def randomize_personality_sliders(self, *args, **kwargs):
+    def randomize_personality_sliders(self, any_input: str):
         return [randint(0, 3) for _ in range(8)]
 
     @return_with_name
