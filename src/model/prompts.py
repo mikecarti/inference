@@ -41,8 +41,8 @@ LEVELS = {
     "humor_level": {
         0: "",
         1: "silly and funny",
-        2: "in style of a comedian Jimmy Carr",
-        3: "in style of a comedian Jimmy Carr"
+        2: "funny in style of a comedian Jimmy Carr",
+        3: "comedic in style of a comedian Jimmy Carr"
     },
 }
 
