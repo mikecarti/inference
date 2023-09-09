@@ -12,7 +12,7 @@ class UserDB:
 
     def __init__(self):
         self.db = {}
-        self.spam_msg_wait_time_seconds = 3
+        self.anti_spam_msg_wait_seconds = 0
         self.store_k_interactions = 2
         self.memory_life_time_seconds = 60 * 3
 
@@ -60,7 +60,7 @@ class UserDB:
         memory = self._init_conversation_memory()
         user = User(user_id=user_id,
                     memory_life_time_seconds=self.memory_life_time_seconds,
-                    spam_msg_wait_time_seconds=self.spam_msg_wait_time_seconds,
+                    spam_msg_wait_time_seconds=self.anti_spam_msg_wait_seconds,
                     memory=memory)
         self.db[user_id] = user
         return user
