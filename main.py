@@ -41,14 +41,14 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
 
 
 @app.post("/get_hint/{user_id}")
-async def get_hint(user_id: int) -> TowardsFrontendPayload:
+async def get_hint(user_id: str) -> TowardsFrontendPayload:
     hint = get_random_hint()
     user_db.add_ai_message(ai_message=hint, user_id=user_id)
     return TowardsFrontendPayload(text=hint, function="", args=[])
 
 
 @app.post("/clear_memory/{user_id}")
-async def clear_memory(user_id: int) -> TowardsFrontendPayload:
+async def clear_memory(user_id: str) -> TowardsFrontendPayload:
     user_db.reset_memory(user_id)
     return TowardsFrontendPayload(text="Память переписки очищена!", function="", args=[])
 
