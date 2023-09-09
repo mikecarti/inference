@@ -18,7 +18,7 @@ def init_logging():
 
 
 def get_random_hint() -> str:
-    with open('data/hints.json') as file:
+    with open('data/hints.json', encoding="utf-8") as file:
         data = json.load(file)
         hints = data['data']
         return choice(hints)
