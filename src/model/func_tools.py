@@ -10,7 +10,7 @@ from src.model.utils import return_with_name
 
 class EmptyInputSchema(BaseModel):
     """Input"""
-    input: str = Field(description="Put here first word in the sentence")
+    input: str = Field(description="Anything")
 
 class ToolConstructor:
     def __init__(self):
@@ -34,11 +34,13 @@ class ToolConstructor:
             ),
             (
                 self.cashback_balance,
-                "Useful for answering questions about a user's cashback balance."
+                "Useful for answering questions about a user's cashback balance.",
+                EmptyInputSchema
             ),
             (
                 self.delivery_status,
-                "Call this function when the user is interested in their delivery/package (e.g., ETA or location)."
+                "Call this function when the user is interested in their delivery/package (e.g., ETA or location).",
+                EmptyInputSchema
             ),
             # Add or uncomment other tuples as needed
             # (
