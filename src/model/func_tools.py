@@ -8,7 +8,7 @@ from src.model.utils import return_with_name
 
 class ToolConstructor:
     def __init__(self):
-        self.tools = self.construct_tools()
+        self.tools = self.construct_tools(debug=True)
 
     def construct_tools(self, debug=False) -> List[Tool]:
         functions_with_description = [
@@ -16,7 +16,8 @@ class ToolConstructor:
             (self.change_message_color, "Useful for changing color of messages. Input color in hexadecimal."),
             (self.randomize_personality_sliders, "Useful for changing personalities settings or for changing sliders"),
             (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
-            (self.delivery_status, "Useful for answering questions about delivery status (cur. location, ETA, etc)."),
+            (self.delivery_status, "Call this function when user is interested about his delivery / package (for "
+                                   "example ETA or location, etc)."),
             (self.wallet_linking, "Useful for linking a virtual wallet to a user's account."),
             (self.document_status, "Checks the status of documents sent to a user."),
             (self.refund_status, "Checks the status of a refund for the last item purchased by a user."),
@@ -24,7 +25,9 @@ class ToolConstructor:
         # function = (Callable, Description)
         tools = [self._make_tool(*func_tuple) for func_tuple in functions_with_description]
         if debug:
-            logger.debug(f"Functions: {tools}")
+            logger.debug("Functions: ")
+            for tool in tools:
+                logger.debug(f"{tool.name}: {tool.description}")
         return tools
 
     @return_with_name

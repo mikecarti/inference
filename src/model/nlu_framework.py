@@ -9,11 +9,11 @@ from typing import List, Tuple
 
 class NLUFramework:
     def __init__(self):
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=100)
+        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=500)
         tools = ToolConstructor().tools
         self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True,
-                                      return_intermediate_steps=True, max_iterations=1)
-        self.suffix = "\nТы обязан ответить на это одним словом"
+                                      return_intermediate_steps=True)
+        self.suffix = "\nТы обязан ответить на это не более чем 20 словами"
 
     def __call__(self, text, verbose=False) -> (str, str, List):
         logger.debug(f"NLU Processing for text: {text}")
@@ -21,8 +21,8 @@ class NLUFramework:
         agent_response = self.agent(text + self.suffix)
         function_name, func_output = self._get_one_func_chain_output(agent_response)
 
-        logger.debug(f"Function: {function_name},"
-                     f"Function output: {func_output},"
+        logger.debug(f"Function: {function_name},\n"
+                     f"Function output: {func_output},\n"
                      f"agent_response: {agent_response}")
 
         if function_name != "":
