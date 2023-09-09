@@ -14,7 +14,7 @@ class ToolConstructor:
         functions_with_description = [
             (self.change_background_color, "Useful for changing or background color. Input color in hexadecimal."),
             (self.change_message_color, "Useful for changing color of messages. Input color in hexadecimal."),
-            (self.randomize_personality_sliders, "Useful for changing personalities settings or for changing sliders"),
+            (self.randomize_personality_sliders, "Useful for changing personalities settings to random or for changing sliders (ползунки)"),
             (self.cashback_balance, "Useful for answering questions about a user's cashback balance."),
             (self.delivery_status, "Call this function when user is interested about his delivery / package (for "
                                    "example ETA or location, etc)."),
