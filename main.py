@@ -10,9 +10,6 @@ from src.model.exceptions import MessageQueueEmptyException, LimitExceededExcept
 from src.model.payload import AddMessageQueuePayload, RetrieveMessageQueuePayload, TowardsFrontendPayload
 from src.model.utils import init_logging, get_random_hint
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-init_logging()
 
 # Initialize API
 app = FastAPI()
@@ -55,6 +52,9 @@ async def clear_memory(user_id: str) -> TowardsFrontendPayload:
 
 def main():
     import uvicorn
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)
+    init_logging()
 
     # os.environ["PYTHONASYNCIODEBUG"] = "1"
     uvicorn.run(app, host="0.0.0.0", port=8000)
