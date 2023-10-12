@@ -1,15 +1,15 @@
 import threading
 from typing import List
 
-import numpy as np
 from loguru import logger
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings.base import Embeddings
 
 from src.model.exceptions import InvalidAnswerException
 from src.model.utils import wrap
+from src.model.embeddings import CustomEmbeddings
 from shutil import rmtree
 
 
@@ -23,24 +23,6 @@ class VectorDataBase:
         self.embeddings = self._init_embeddings(embeddings)
         self.db = self._specify_db(load_existing=True)
         self._log_number_of_db_entries()
-
-    async def amanual_search_with_weights(self, messages: List, k_nearest=4, verbose=True):
-        messages_embeddings = [self.embeddings.embed_query(msg) for msg in messages]
-        weights = [2 ** i for i in range(len(messages_embeddings))]
-        normalized_weights = np.array(weights) / np.sum(weights)
-        logger.debug(f"Weights: {normalized_weights}")
-        expanded_weights = np.expand_dims(normalized_weights, axis=-1)
-
-        weighted_embeddings = messages_embeddings * expanded_weights
-        weighted_messages_sum = np.sum(weighted_embeddings, axis=0).tolist()
-
-        similar_docs = await self.db.asimilarity_search_by_vector(weighted_messages_sum, k=k_nearest)
-
-        similar_doc = similar_docs[0]
-        if verbose:
-            self._log_search(messages[-1], similar_doc)
-
-        return similar_doc.page_content
 
     async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> str:
         query = ' '.join(messages)
@@ -67,10 +49,8 @@ class VectorDataBase:
         logger.debug(f"Real Question: {wrap(str(query))}")
         logger.debug(f"Found Question: {similar_doc}")
 
-    def _vectorize_docs(self, embeddings):
+    def _vectorize_docs(self):
         """
-        embeddings - usually OpenAIEmbeddings
-        =========
         return - FAISS db
         """
         # грузим файл в лоадер
@@ -85,7 +65,7 @@ class VectorDataBase:
         texts = text_splitter.split_documents(documents)
 
         # создаем хранилище
-        db = FAISS.from_documents(texts, embeddings)
+        db = FAISS.from_documents(texts, self.embeddings)
         db.as_retriever()
 
         return db
@@ -102,7 +82,7 @@ class VectorDataBase:
 
     def _create_vector_db(self):
         logger.info("Creating vector database...")
-        vector_db = self._vectorize_docs(self.embeddings)
+        vector_db = self._vectorize_docs()
         logger.info("Created vector database")
         return vector_db
 
@@ -138,11 +118,12 @@ class VectorDataBase:
             return input_result[0]  # Return the input result
 
     @staticmethod
-    def _init_embeddings(embeddings) -> OpenAIEmbeddings:
-        if not embeddings:
-            return OpenAIEmbeddings()
-        else:
+    def _init_embeddings(embeddings) -> Embeddings:
+        if embeddings:
             return embeddings
+        hf_embeddings = CustomEmbeddings()
+
+        return hf_embeddings
 
     def _log_number_of_db_entries(self):
         number_of_entries = len(self.db.index_to_docstore_id)
