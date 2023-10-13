@@ -1,20 +1,26 @@
-import time
-from typing import List, Dict
+from typing import Dict
 
-import requests
+from langchain.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
 from loguru import logger
+import requests
+import time
 
-from langchain.embeddings.base import Embeddings
 
-class CustomEmbeddings(Embeddings):
+class CustomEmbeddings():
     API_URL = "https://api-inference.huggingface.co/models/intfloat/multilingual-e5-large"
     headers = {"Authorization": "Bearer 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"}
     ERROR_COLD_START = "Model intfloat/multilingual-e5-large is currently loading"
 
     def __init__(self):
-        logger.debug(f"Test embedding initialization...")
-        response = self.embed_query("we are testing")
-        logger.debug(f"Response: {response}")
+        self.embeddings = HuggingFaceInferenceAPIEmbeddings(
+            api_key=self.API_URL,
+            model_name="intfloat/multilingual-e5-large"
+        )
+
+        self._query()
+
+        query_result = self.embeddings.embed_query(" Privet, Prive,t Privet")
+        logger.debug(f"Test embeddings: {query_result}")
 
     def _query(self, payload):
         # Returns error with estimated time if model is still loading
@@ -29,20 +35,8 @@ class CustomEmbeddings(Embeddings):
         return response
 
     def _model_is_loading(self, response: Dict):
-        if isinstance(response, list):
-            return False
         return response["error"] and response["error"] == self.ERROR_COLD_START
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        embeddings = [self.embed_query(t) for t in texts]
-        return embeddings
 
-    def embed_query(self, text: str) -> List[float]:
-        """Embed query text."""
-        embedding = self._query(text)
-
-        err_msg = f"Error, wrong type: {embedding} \n Type: {type(embedding)}"
-        assert isinstance(embedding, list), err_msg
-        assert isinstance(embedding[0], float), err_msg
-
-        return embedding
+    def get(self):
+        return self.embeddings

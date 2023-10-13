@@ -121,7 +121,7 @@ class VectorDataBase:
     def _init_embeddings(embeddings) -> Embeddings:
         if embeddings:
             return embeddings
-        hf_embeddings = CustomEmbeddings()
+        hf_embeddings = CustomEmbeddings().get()
 
         return hf_embeddings
 
