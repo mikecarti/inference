@@ -5,7 +5,7 @@ from loguru import logger
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
-from langchain.embeddings.openai import OpenAIEmbeddings .base import Embeddings
+from langchain.embeddings.base import Embeddings
 
 from src.model.exceptions import InvalidAnswerException
 from src.model.utils import wrap
