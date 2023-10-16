@@ -1,5 +1,6 @@
 from typing import Dict, List
 
+import numpy as np
 from langchain.embeddings.huggingface import HuggingFaceInferenceAPIEmbeddings
 from loguru import logger
 import requests
@@ -16,8 +17,13 @@ def _custom_embed_query_func(self, text: str) -> List[float]:
         Embeddings for the text.
     """
     emb = self.embed_documents([text])
-    logger.debug(f"Embeddings in langchain: {emb, type(emb)}")
-    return emb[0]
+    logger.debug(f"Shape of embedding: {np.array(emb).shape}\nResponse trunc.: {emb[0][:3]}")
+    # make embeddings compatible to FAISS (1, 256 shape)
+    embeddings = emb[0][:256]
+
+    logger.debug(f"New Shape of embedding: {np.array(emb).shape}\nNew Response trunc.: {emb[0][:3]}")
+
+    return embeddings
 
 
 class CustomEmbeddings():
@@ -26,16 +32,17 @@ class CustomEmbeddings():
     ERROR_COLD_START = "Model intfloat/multilingual-e5-large is currently loading"
 
     def __init__(self):
+        # change function for our custom function
         HuggingFaceInferenceAPIEmbeddings.embed_query = _custom_embed_query_func
+        api_key = self.headers.get("Authorization").split(" ")[1]
+
         self.embeddings = HuggingFaceInferenceAPIEmbeddings(
-            api_key="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",
+            api_key=api_key,
             model_name="intfloat/multilingual-e5-large"
         )
-        # change function for our custom function
-        res = self._query("Test Test")
+        self._test_query("Test Test")
 
-
-    def _query(self, payload):
+    def _test_query(self, payload):
         # Returns error with estimated time if model is still loading
         response = requests.post(self.API_URL, headers=self.headers, json=payload).json()
 
@@ -44,7 +51,7 @@ class CustomEmbeddings():
             time.sleep(response["estimated_time"] + extra_time_just_in_case)
             response = requests.post(self.API_URL, headers=self.headers, json=payload).json()
 
-            logger.debug(f"Response: {response[:3]}")
+            logger.debug(f"Shape of embedding: {np.array(response).shape}Response: {response[:3]}")
         return response
 
     def _model_is_loading(self, response: Dict):

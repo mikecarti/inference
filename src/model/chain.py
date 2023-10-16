@@ -1,4 +1,4 @@
-from langchain import LLMChain
+from langchain.chains.llm import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
