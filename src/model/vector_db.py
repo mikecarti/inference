@@ -16,12 +16,13 @@ from shutil import rmtree
 class VectorDataBase:
     THRESHOLD: float = 0.6
     CONSOLE_WAIT_DEFAULT: int = 3
+    CREATE_NEW_VECTOR_DB: bool = True
     def __init__(self, embeddings=None):
         self.data_path = "data/about_us.txt"
         self.db_path = "faiss_index"
 
         self.embeddings = self._init_embeddings(embeddings)
-        self.db = self._specify_db(load_existing=True)
+        self.db = self._specify_db()
         self._log_number_of_db_entries()
 
     async def amanual_search(self, messages: List, verbose=True, k_nearest=4) -> str:
@@ -86,18 +87,14 @@ class VectorDataBase:
         logger.info("Created vector database")
         return vector_db
 
-    def _specify_db(self, load_existing=False):
+    def _specify_db(self):
+        load_existing = not self.CREATE_NEW_VECTOR_DB
+
         if load_existing:
             return self._load_vector_db()
-        logger.info("\n(1)Load vector db\n(2)Create one?\n\t [1/2]")
-        ans = self._get_input_with_timeout_for_console()  # Wait for input for 3 seconds
-        if ans is None or ans == "1":
-            vector_db = self._load_vector_db()
-        elif ans == "2":
+        else:
             vector_db = self._create_vector_db()
             self._save_db_locally(vector_db)
-        else:
-            raise InvalidAnswerException("Invalid answer")
         return vector_db
 
     def _get_input_with_timeout_for_console(self) -> None | str:

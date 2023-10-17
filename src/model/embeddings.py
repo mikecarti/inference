@@ -18,11 +18,10 @@ def _custom_embed_query_func(self, text: str) -> List[float]:
     """
     emb = self.embed_documents([text])
     logger.debug(f"Shape of embedding: {np.array(emb).shape}\nResponse trunc.: {emb[0][:3]}")
-    # make embeddings compatible to FAISS (1, 256 shape)
-    embeddings = emb[0][:256]
+    # make embeddings compatible
+    embeddings = emb[0]
 
-    logger.debug(f"New Shape of embedding: {np.array(emb).shape}\nNew Response trunc.: {emb[0][:3]}")
-
+    logger.debug(f"New Shape of embedding: {np.array(embeddings).shape}\nNew Response trunc.: {embeddings[:3]}")
     return embeddings
 
 
@@ -33,7 +32,7 @@ class CustomEmbeddings():
 
     def __init__(self):
         # change function for our custom function
-        HuggingFaceInferenceAPIEmbeddings.embed_query = _custom_embed_query_func
+        # HuggingFaceInferenceAPIEmbeddings.embed_query = _custom_embed_query_func
         api_key = self.headers.get("Authorization").split(" ")[1]
 
         self.embeddings = HuggingFaceInferenceAPIEmbeddings(
