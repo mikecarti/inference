@@ -7,13 +7,14 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings.base import Embeddings
 
-from src.model.exceptions import InvalidAnswerException
+from langchain.embeddings import HuggingFaceEmbeddings
 from src.model.utils import wrap
 from src.model.embeddings import CustomEmbeddings
 from shutil import rmtree
 
 
 class VectorDataBase:
+    EMBEDDING_HF_NAME = "intfloat/multilingual-e5-large"
     THRESHOLD: float = 0.6
     CONSOLE_WAIT_DEFAULT: int = 3
     CREATE_NEW_VECTOR_DB: bool = True
@@ -114,11 +115,11 @@ class VectorDataBase:
         else:
             return input_result[0]  # Return the input result
 
-    @staticmethod
-    def _init_embeddings(embeddings) -> Embeddings:
+    def _init_embeddings(self, embeddings) -> Embeddings:
         if embeddings:
             return embeddings
-        hf_embeddings = CustomEmbeddings().get()
+        hf_embeddings = HuggingFaceEmbeddings(model_name=self.EMBEDDING_HF_NAME)
+        # hf_embeddings = CustomEmbeddings().get()
 
         return hf_embeddings
 
