@@ -14,7 +14,8 @@ from shutil import rmtree
 
 
 class VectorDataBase:
-    EMBEDDING_HF_NAME = "intfloat/multilingual-e5-large"
+    # change for "intfloat/multilingual-e5-large" if you have enough RAM
+    EMBEDDING_HF_NAME = "intfloat/multilingual-e5-small"
     THRESHOLD: float = 0.6
     CONSOLE_WAIT_DEFAULT: int = 3
     CREATE_NEW_VECTOR_DB: bool = True
@@ -74,7 +75,7 @@ class VectorDataBase:
 
     def _save_db_locally(self, db):
         # сохранить хранилище локально
-        rmtree(self.db_path, ignore_errors=False)
+        rmtree(self.db_path, ignore_errors=True)
         db.save_local(self.db_path)
 
     def _load_vector_db(self):
