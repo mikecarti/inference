@@ -1,4 +1,3 @@
-import threading
 from typing import List
 
 from loguru import logger

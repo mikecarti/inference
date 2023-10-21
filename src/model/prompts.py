@@ -1,5 +1,5 @@
 HELPDESK_PROMPT_TEMPLATE = """
-You are a superintelligent AI.
+You are a super-intelligent AI.
 You talk with users to help them with their questions.
 Only speak russian language. Use a polite form of communication.
 
@@ -49,7 +49,6 @@ LEVELS = {
 # Collect data for mood-text transformations
 REQUIRED_SLIDERS = list(LEVELS.keys())
 INSTRUCTIONS = "\n".join([f"- {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
-
 
 TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
 You change text according to rules.

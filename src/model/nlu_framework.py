@@ -54,4 +54,3 @@ class NLUFramework:
 
         logger.debug(f"Intent is recognized, function output: {function_output}")
         return function_name, function_outputs
-

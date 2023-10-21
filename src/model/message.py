@@ -21,5 +21,3 @@ class AbstractMessage:
 @dataclass()
 class UserMessage(AbstractMessage):
     pass
-
-

@@ -3,7 +3,7 @@ from typing import Type
 from langchain.chains import LLMChain
 from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
 from langchain.schema import BaseMemory
 from loguru import logger
@@ -16,6 +16,7 @@ class KnowledgeChain:
     """
     Main LLM chain, that has access to vector knowledge base.
     """
+
     def __init__(self, vector_knowledge_db: VectorDataBase):
         self.chain: Type[Chain] = self.init_chain()
         self.vector_db: VectorDataBase = vector_knowledge_db
