@@ -20,9 +20,16 @@ class StatisticsDB:
         self.test_db()
 
     def connection(self) -> sqlite3.Connection:
+        """
+        Receive DB connection object
+        :return:
+        """
         return sqlite3.connect(self.DB_FILE_PATH)
 
     def initialize_db_if_not_exists(self):
+        """
+        :return:
+        """
         with self.connection() as conn:
             cursor = conn.cursor()
 
@@ -63,6 +70,10 @@ class StatisticsDB:
             cursor.execute(sql_query, values)
 
     def test_db(self):
+        """
+        Test entry
+        :return:
+        """
         data = {
             StatType.DATETIME: '2023-10-20',
             StatType.IP_PORT: '127.0.0.1',
@@ -176,7 +187,7 @@ class StatisticsWatcher:
         Send collected buffer on a single request to db.
         :return:
         """
-        logger.debug(f"Data saved to database: {self.stats_row}")
+        logger.debug(f"Data saved to statistics database.")
         self.stats_db.insert_row(self.stats_row)
         self.stats_row = {}
 

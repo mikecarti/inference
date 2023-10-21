@@ -1,11 +1,10 @@
-import cProfile
 import logging
 import traceback
 
 from fastapi import FastAPI, HTTPException
 from loguru import logger
 
-from src.controller.controller import prepare_answer, user_db
+from src.controller.controller import compose_answer, user_db
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
 from src.model.payload import AddMessageQueuePayload, RetrieveMessageQueuePayload, TowardsFrontendPayload
 from src.model.utils import init_logging, get_random_hint
@@ -37,7 +36,7 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
     :return:
     """
     try:
-        return await prepare_answer(payload)
+        return await compose_answer(payload)
     except MessageQueueEmptyException:
         raise HTTPException(status_code=404, detail="Message queue is empty")
     except LimitExceededException:
@@ -49,6 +48,11 @@ async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFronten
 
 @app.post("/get_hint/{user_id}")
 async def get_hint(user_id: str) -> TowardsFrontendPayload:
+    """
+    Receive a hint for user from data/hints.json, so user knows what functionality to try.
+    :param user_id:
+    :return:
+    """
     hint = get_random_hint()
     user_db.add_ai_message(ai_message=hint, user_id=user_id)
     return TowardsFrontendPayload(text=hint, function="", args=[])
@@ -56,6 +60,11 @@ async def get_hint(user_id: str) -> TowardsFrontendPayload:
 
 @app.post("/clear_memory/{user_id}")
 async def clear_memory(user_id: str) -> TowardsFrontendPayload:
+    """
+    Clear memory of a current user.
+    :param user_id:
+    :return:
+    """
     user_db.reset_memory(user_id)
     return TowardsFrontendPayload(text="Память переписки очищена!", function="", args=[])
 
@@ -72,4 +81,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # cProfile.run("main()", sort="cumtime")
+    # cProfile.run("main()", sort="cumtime") # optimization by time logging

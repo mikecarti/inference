@@ -7,17 +7,26 @@ from loguru import logger
 from random import choice
 
 
-def wrap(text):
+def wrap(text: str) -> str:
+    """
+    Make text more beautiful
+    :param text:
+    :return:
+    """
     return textwrap.fill(text, width=100)
 
 
-def init_logging():
+def init_logging() -> None:
     logger.remove()
     logger.add(sys.stdout, format="{time:HH:mm:ss}: {message}")
     logger.add("logs.log")
 
 
 def get_random_hint() -> str:
+    """
+    Retrieve random hint from file
+    :return:
+    """
     with open('data/hints.json', encoding="utf-8") as file:
         data = json.load(file)
         hints = data['data']
@@ -26,7 +35,7 @@ def get_random_hint() -> str:
 
 def return_with_name(func: Callable) -> (str, List[str]):
     """
-    Not only the function result(s) is (are) returned, but also pythonic function's name.
+    Not only the function result(s) is (are) returned, but also python function's name.
     :param func:
     :return: function name and list of output
     """

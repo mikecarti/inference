@@ -18,6 +18,11 @@ class ToolConstructor:
         self.tools = self.construct_tools(debug=True)
 
     def construct_tools(self, debug=False) -> List[Tool]:
+        """
+        Create langchain agent tools
+        :param debug: bool
+        :return:
+        """
         # function = (Callable, Description, args_schema)
         functions_with_description = [
             (

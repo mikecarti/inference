@@ -10,6 +10,9 @@ class FrontendUser:
 
 @dataclass()
 class AbstractMessage:
+    """
+    User message instance
+    """
     text: str
     date: datetime
     from_user: FrontendUser

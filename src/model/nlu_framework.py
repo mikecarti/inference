@@ -40,7 +40,7 @@ class NLUFramework:
     @staticmethod
     def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List]:
         """
-        Retreive only function results, skip LLM Text Generation.
+        Retrieve only function results, skip LLM Text Generation.
         :param agent_response:
         :return:
         """
