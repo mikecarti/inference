@@ -10,7 +10,7 @@ from src.model.message import AbstractMessage
 class StatisticsDB:
     """
     To load db file from a container to host run:
-    docker cp <this_container_id>:/app/stats/useful_stats.db /path/on/host/useful_stats.db
+    docker cp helpdesk_container:/app/helpdesk/stats/useful_stats.db helpdesk/stats/useful_stats.db
     """
     DB_FILE_PATH: str = 'stats/useful_stats.db'
     TABLE_NAME: str = 'Requests'
