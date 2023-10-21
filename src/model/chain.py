@@ -1,43 +1,42 @@
+from typing import Type
+
 from langchain.chains import LLMChain
+from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
+from langchain.schema import BaseMemory
 from loguru import logger
 
 from src.model.prompts import HELPDESK_PROMPT_TEMPLATE
-from src.model.vector_db import VectorDataBase
+from src.model.db_vector import VectorDataBase
 
 
-class Chain:
-    def __init__(self, db: VectorDataBase):
-        self.chain = self.init_chain()
-        self.vector_db: VectorDataBase = db
-        self.k_closest_results = 10
+class SupportBotChain:
+    def __init__(self, vector_knowledge_db: VectorDataBase):
+        self.chain: Type[Chain] = self.init_chain()
+        self.vector_db: VectorDataBase = vector_knowledge_db
+        self.k_closest_results: int = 10
 
-    async def apredict(self, memory, query):
+    async def apredict(self, memory: Type[BaseMemory], query: str) -> str:
         manual_part = await self.amanual_search(query, k=self.k_closest_results)
         response = await self.arun_with_memory(manual_part, memory, query)
         logger.debug(f"Answer: ", response)
         return response
 
-    async def arun_with_memory(self, manual_part, memory: ConversationBufferMemory, query: str):
+    async def arun_with_memory(self, manual_part: str, memory: Type[BaseMemory], query: str) -> str:
         await self._set_memory(memory)
         # logger.debug(f"Manual after formatting: {manual_part}")
         response = await self.chain.arun(manual_part=manual_part, question=query)
         return response
 
-    async def amanual_search(self, query, k):
+    async def amanual_search(self, query: str, k: int) -> str:
         logger.debug(f"SEARCHING IN VECTOR DB THIS: \n {query}")
         manual_part = await self.vector_db.amanual_search([query], k_nearest=k)
         return manual_part
 
     @staticmethod
-    def get_most_similar_result(query, db):
-        similar_doc = db.similarity_search_with_score(query)[0][0]
-        return similar_doc
-
-    @staticmethod
-    def init_chain():
+    def init_chain() -> Type[Chain]:
         prompt = PromptTemplate(
             template=HELPDESK_PROMPT_TEMPLATE, input_variables=['manual_part', 'question', 'chat_history']
         )
@@ -50,5 +49,5 @@ class Chain:
         )
         return chain
 
-    async def _set_memory(self, memory):
+    async def _set_memory(self, memory: Type[BaseMemory]):
         self.chain.memory = memory

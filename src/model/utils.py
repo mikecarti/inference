@@ -1,7 +1,7 @@
 import json
 import sys
 import textwrap
-from typing import List
+from typing import List, Callable
 
 from loguru import logger
 from random import choice
@@ -24,8 +24,9 @@ def get_random_hint() -> str:
         return choice(hints)
 
 
-def return_with_name(func) -> (str, List[str]):
+def return_with_name(func: Callable) -> (str, List[str]):
     """
+    Not only the function result(s) is (are) returned, but also pythonic function's name.
     :param func:
     :return: function name and list of output
     """

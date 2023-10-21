@@ -7,6 +7,9 @@ from src.model.message import FrontendUser, UserMessage
 
 
 class AddMessageQueuePayload(BaseModel):
+    """
+    Payload for queue message processing on Helpdesk
+    """
     text: str
     date: datetime
     from_user: FrontendUser
@@ -23,7 +26,10 @@ class AddMessageQueuePayload(BaseModel):
 
 
 class RetrieveMessageQueuePayload(BaseModel):
-    # id
+    """
+    Payload for retrieving processed messages on Helpdesk
+    """
+    # Usually id is IP and Port
     user_id: str
     # all_sliders with int values
     # {
@@ -34,6 +40,9 @@ class RetrieveMessageQueuePayload(BaseModel):
 
 
 class TowardsFrontendPayload(BaseModel):
+    """
+    Payload for sending response on Frontend
+    """
     text: str
     function: str
     args: List[str]

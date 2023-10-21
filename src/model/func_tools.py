@@ -12,6 +12,7 @@ class EmptyInputSchema(BaseModel):
     """Input"""
     input: str = Field(description="Anything")
 
+
 class ToolConstructor:
     def __init__(self):
         self.tools = self.construct_tools(debug=True)
@@ -64,6 +65,30 @@ class ToolConstructor:
                 logger.debug(f"{tool.name}: {tool.description}")
         return tools
 
+    @staticmethod
+    def _make_tool(function: Callable, description: str, args_schema: dict = None):
+        """
+        This function creates a Langchain Tool, that has pythonic function name for a langchain tool name.
+
+        :param function:
+        :param description:
+        :param args_schema:
+        :return:
+        """
+        tool_args = {
+            'name': function.__name__,
+            'func': function,
+            'description': description
+        }
+        if args_schema:
+            tool_args['args_schema'] = args_schema
+
+        tool = Tool(**tool_args)
+        return tool
+
+    # ------------------ #
+    #   Bot Functions:   #
+    # ------------------ #
     @return_with_name
     def change_background_color(self, color_hex: str):
         return color_hex
@@ -97,18 +122,3 @@ class ToolConstructor:
     @return_with_name
     def refund_status(self, x):
         return "Refund will be provided in 1 hour"
-
-    @staticmethod
-    def _make_tool(function: Callable, description: str, args_schema: dict = None):
-        tool_args = {
-            'name': function.__name__,
-            'func': function,
-            'description': description
-        }
-        if args_schema:
-            tool_args['args_schema'] = args_schema
-
-        tool = Tool(**tool_args)
-        return tool
-
-

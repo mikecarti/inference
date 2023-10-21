@@ -17,6 +17,11 @@ app = FastAPI()
 
 @app.post("/add_message")
 async def add_message_to_queue(payload: AddMessageQueuePayload) -> None:
+    """
+    Add message to queue for processing.
+    :param payload:
+    :return:
+    """
     message = payload.to_user_message()
 
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
@@ -26,6 +31,11 @@ async def add_message_to_queue(payload: AddMessageQueuePayload) -> None:
 
 @app.post("/answer_message")
 async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFrontendPayload:
+    """
+    Answer the first message from queue.
+    :param payload:
+    :return:
+    """
     try:
         return await prepare_answer(payload)
     except MessageQueueEmptyException:

@@ -10,12 +10,18 @@ from typing import List, Tuple
 class NLUFramework:
     def __init__(self):
         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=500)
-        tools = ToolConstructor().tools
+        tools: List[Tool] = ToolConstructor().tools
         self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True,
                                       return_intermediate_steps=True)
         self.suffix = "\nТы обязан ответить на это не более чем 20 словами"
 
-    def __call__(self, text, verbose=False) -> (str, str, List):
+    def __call__(self, text: str, verbose=False) -> (str, str, List):
+        """
+        Main method of class.
+        :param text:
+        :param verbose:
+        :return:
+        """
         logger.debug(f"NLU Processing for text: {text}")
 
         agent_response = self.agent(text + self.suffix)
@@ -33,6 +39,11 @@ class NLUFramework:
 
     @staticmethod
     def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List]:
+        """
+        Retreive only function results, skip LLM Text Generation.
+        :param agent_response:
+        :return:
+        """
         intermediate_steps = agent_response.get("intermediate_steps")
         if not intermediate_steps or len(intermediate_steps) == 0:
             logger.debug("Intent is not recognized")

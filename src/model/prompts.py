@@ -46,6 +46,7 @@ LEVELS = {
     },
 }
 
+# Collect data for mood-text transformations
 REQUIRED_SLIDERS = list(LEVELS.keys())
 INSTRUCTIONS = "\n".join([f"- {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
