@@ -1,47 +1,26 @@
 import logging
-import os
-from loguru import logger
+import traceback
+
 from fastapi import FastAPI, HTTPException
+from loguru import logger
 
-from src.model.chain import Chain
+from src.controller.controller import compose_answer, user_db
 from src.model.exceptions import MessageQueueEmptyException, LimitExceededException
-from src.model.user_db.user_db import UserDB
-from src.model.utils import wrap, init_logging
-from src.model.vector_db import VectorDataBase
-from src.model.message import RestApiMessage, MessagePayload, AbstractMessage, FrontendUser
-from src.model.nlu_framework import NLUFramework
-from src.view.view import View
+from src.model.payload import AddMessageQueuePayload, RetrieveMessageQueuePayload, TowardsFrontendPayload
+from src.model.utils import init_logging, get_random_hint
 
-# TOKENS
-os.environ['OPENAI_API_KEY'] = "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"
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-init_logging()
-
-# Initialize bot and dispatcher
+# Initialize API
 app = FastAPI()
-
-# Initialize DBs and LLM
-user_db = UserDB()
-chain = Chain(db=VectorDataBase())
-nlu_tool = NLUFramework()
-
-# Initialize View
-view = View()
-
 
 
 @app.post("/add_message")
-async def add_message_to_queue(payload: MessagePayload) -> None:
-    message = RestApiMessage(
-        text=payload.text,
-        date=payload.date,
-        from_user=FrontendUser(
-            id=payload.from_user.id,
-            username=payload.from_user.username
-        )
-    )
+async def add_message_to_queue(payload: AddMessageQueuePayload) -> None:
+    """
+    Add message to queue for processing.
+    :param payload:
+    :return:
+    """
+    message = payload.to_user_message()
 
     logger.debug(f"Message from user {message.from_user.username} added to queue: <{message.text}>")
     user_id = message.from_user.id
@@ -49,48 +28,55 @@ async def add_message_to_queue(payload: MessagePayload) -> None:
 
 
 @app.post("/answer_message")
-async def answer_message(data: dict) -> dict:
+async def answer_message(payload: RetrieveMessageQueuePayload) -> TowardsFrontendPayload:
+    """
+    Answer the first message from queue.
+    :param payload:
+    :return:
+    """
     try:
-        message = await user_db.get_from_queue(data["user_id"])
-        answer = process_intents(message)
-        if not answer:
-            answer = await generate_answer(message)
-        logger.debug(f"Answer: {wrap(answer)}")
-        return {"text": answer}
+        return await compose_answer(payload)
     except MessageQueueEmptyException:
         raise HTTPException(status_code=404, detail="Message queue is empty")
     except LimitExceededException:
         raise HTTPException(status_code=429, detail="Spam limit exceeded")
     except Exception as e:
-        logger.debug(f"Exception: {e}")
+        logger.debug(f"Exception: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/get_hint/{user_id}")
+async def get_hint(user_id: str) -> TowardsFrontendPayload:
+    """
+    Receive a hint for user from data/hints.json, so user knows what functionality to try.
+    :param user_id:
+    :return:
+    """
+    hint = get_random_hint()
+    user_db.add_ai_message(ai_message=hint, user_id=user_id)
+    return TowardsFrontendPayload(text=hint, function="", args=[])
+
+
 @app.post("/clear_memory/{user_id}")
-async def clear_memory(user_id: int) -> dict:
+async def clear_memory(user_id: str) -> TowardsFrontendPayload:
+    """
+    Clear memory of a current user.
+    :param user_id:
+    :return:
+    """
     user_db.reset_memory(user_id)
-    return {"text": "Память переписки очищена!"}
+    return TowardsFrontendPayload(text="Память переписки очищена!", function="", args=[])
 
 
-async def generate_answer(message: AbstractMessage) -> str:
-    user_id = message.from_user.id
-    user_text = message.text
-
-    memory = user_db.get_memory(user_id)
-    answer = await chain.apredict(memory, user_text)
-
-    answer = view.process_answer(answer)
-    return answer
-
-
-def process_intents(message: AbstractMessage) -> str:
-    return nlu_tool.run(query=message.text)
-
-
-# alternatively run in console
-# uvicorn main:app --host 0.0.0.0 --port 8000
-if __name__ == '__main__':
+def main():
     import uvicorn
+    logging.basicConfig(level=logging.INFO)
+    init_logging()
 
     # os.environ["PYTHONASYNCIODEBUG"] = "1"
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == '__main__':
+    main()
+    # cProfile.run("main()", sort="cumtime") # optimization by time logging

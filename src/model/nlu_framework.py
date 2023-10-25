@@ -1,52 +1,56 @@
-import os
-from enum import Enum
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import AgentType
+from langchain.chat_models import ChatOpenAI
+from loguru import logger
+from src.model.func_tools import ToolConstructor
 
-from google.cloud import dialogflow
-from src.model.exceptions import UnknownIntentException
-
-
-class Intents(Enum):
-    FALLBACK = "Default Fallback Intent"
-    DELIVERY_STATUS = "Delivery Status Intent"
-    CASHBACK_BALANCE = "Cashback Balance Intent"
-
+from typing import List, Tuple
 
 
 class NLUFramework:
-    credentials_path = 'data/credentials.json'
-    project_id = 'helpdeskagent-vlbw'
-    language_code = 'ru'
-
     def __init__(self):
-        self.session_client = dialogflow.SessionsClient.from_service_account_json(self.credentials_path)
+        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613", max_tokens=500)
+        tools: List[Tool] = ToolConstructor().tools
+        self.agent = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True,
+                                      return_intermediate_steps=True)
+        self.suffix = "\nТы обязан ответить на это не более чем 20 словами"
 
-    def run(self, query) -> str | None:
-        intent = self.detect_intent(query)
-        result = self.process_intent(intent)
-        return result
+    def __call__(self, text: str, verbose=False) -> (str, str, List):
+        """
+        Main method of class.
+        :param text:
+        :param verbose:
+        :return:
+        """
+        logger.debug(f"NLU Processing for text: {text}")
 
-    def detect_intent(self, text: str) -> dict:
-        session_id = 'unique-session-id'
-        session = self.session_client.session_path(self.project_id, session_id)
+        agent_response = self.agent(text + self.suffix)
+        function_name, func_output = self._get_one_func_chain_output(agent_response)
 
-        text_input = dialogflow.TextInput({"text": text, "language_code": self.language_code})
-        query_input = dialogflow.QueryInput({"text": text_input})
+        logger.debug(f"Function: {function_name},\n"
+                     f"Function output: {func_output},\n"
+                     f"agent_response: {agent_response}")
 
-        response = self.session_client.detect_intent(
-            session=session,
-            query_input=query_input
-        )
-
-        intent_display_name = response.query_result.intent.display_name
-        return intent_display_name
-
-    def process_intent(self, intent: str) -> str | None:
-        intent = intent.strip()
-        if intent == Intents.DELIVERY_STATUS.value:
-            return "Ваш статус посылки - Тест"
-        elif intent == Intents.CASHBACK_BALANCE.value:
-            return "Кэшбек баланс - Тест"
-        elif intent == Intents.FALLBACK.value:
-            return None
+        if function_name != "":
+            output_text = f"Функция {function_name} вызвана!"
         else:
-            raise UnknownIntentException(f"Unknown intent: {intent}")
+            output_text = ""
+        return output_text, function_name, func_output
+
+    @staticmethod
+    def _get_one_func_chain_output(agent_response: dict) -> Tuple[str, List]:
+        """
+        Retrieve only function results, skip LLM Text Generation.
+        :param agent_response:
+        :return:
+        """
+        intermediate_steps = agent_response.get("intermediate_steps")
+        if not intermediate_steps or len(intermediate_steps) == 0:
+            logger.debug("Intent is not recognized")
+            return "", []
+        function_output = intermediate_steps[0][1]
+        function_name = function_output[0]
+        function_outputs = function_output[1]
+
+        logger.debug(f"Intent is recognized, function output: {function_output}")
+        return function_name, function_outputs

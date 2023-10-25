@@ -1,26 +1,23 @@
 from datetime import datetime
 from dataclasses import dataclass
-from pydantic import BaseModel
 
 
 @dataclass()
 class FrontendUser:
-    id: int
+    id: str
     username: str
 
 
 @dataclass()
 class AbstractMessage:
+    """
+    User message instance
+    """
     text: str
     date: datetime
     from_user: FrontendUser
 
 
 @dataclass()
-class RestApiMessage(AbstractMessage):
+class UserMessage(AbstractMessage):
     pass
-
-class MessagePayload(BaseModel):
-    text: str
-    date: datetime
-    from_user: FrontendUser
